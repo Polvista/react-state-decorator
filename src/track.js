@@ -12,8 +12,9 @@ export function track(target, propertyName, descriptor) {
             return value;
         },
         set(val) {
+            const isChanged = value !== val;
             value = val;
-            this.forceUpdate();
+            isChanged && this.forceUpdate();
         }
     };
 }
