@@ -1,62 +1,31 @@
+import classPropertyDecorator from './classPropertyDecorator';
+import {getOrCreateTracker, getTracker} from './tracker';
+
 export function track(target, propertyName, descriptor) {
-    let value;
-    let update;
 
-    if(descriptor.initializer) {
-        value = descriptor.initializer();
-        if(typeof value === 'object') {
-            trackProperties(value, () => update());
-        }
+    function initialize(instance, initialValue) {
+        const tracker = getOrCreateTracker(instance);
+        tracker.values[propertyName] = initialValue;
     }
 
-    function createDescriptor(initialValue, onChange) {
-        let value = initialValue;
-
-        return {
-            enumerable: true,
-            configurable: true,
-            get() {
-                return value;
-            },
-            set(val) {
-                const isChanged = value !== val;
-                value = val;
-                isChanged && onChange();
-            }
-        };
+    function get() {
+        const tracker = getTracker(this);
+        return tracker.values[propertyName];
     }
 
-    function trackProperties(object, onChange) {
-        const keys = Object.keys(object);
-
-        keys.forEach(key => {
-            const propValue = object[key];
-            Object.defineProperty(object, key, createDescriptor(propValue, onChange));
-            if(typeof propValue === 'object') {
-                trackProperties(propValue, onChange);
-            }
-        });
+    function set(val) {
+        const tracker = getTracker(this);
+        const isSame = tracker.values[propertyName] === val;
+        tracker.values[propertyName] = val;
+        !isSame && this.forceUpdate();
     }
 
-    return {
-        enumerable: true,
-        configurable: true,
-        get() {
-            if(!update) {
-                update = () => this.forceUpdate();
-            }
-            return value;
-        },
-        set(val) {
-            if(!update) {
-                update = () => this.forceUpdate();
-            }
-            const isChanged = value !== val;
-            value = val;
-            isChanged && this.forceUpdate();
-            if(typeof value === 'object') {
-                trackProperties(val, () => this.forceUpdate());
-            }
-        }
-    };
+    return classPropertyDecorator(
+        target,
+        propertyName,
+        descriptor,
+        initialize,
+        get,
+        set,
+    );
 }
