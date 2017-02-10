@@ -48,7 +48,7 @@ export function makeTrackable(target) {
                     return tracker.getValue(propName);
                 },
                 set(value) {
-                    tracker.setValue(propName, value)
+                    tracker.setValue(propName, value);
                 }
             });
 

@@ -17,6 +17,26 @@ export default class TrackTest extends Component {
         }
     };
 
+    @track uninit;
+
+    @track withGetSet;
+
+    componentDidMount() {
+        this.uninit = 10;
+
+        let val = 3;
+        this.withGetSet = {
+            get val() {
+                console.log('getter is working');
+                return val;
+            },
+            set val(value) {
+                console.log('setter is working');
+                val = value;
+            }
+        };
+    }
+
     increment() {
         this.count++;
         this.count++;
@@ -32,6 +52,14 @@ export default class TrackTest extends Component {
 
     changeDeepProp = () => {
         this.taskDeep.nested.deepProp += 1;
+    };
+
+    changeUninitProp = () => {
+        this.uninit++;
+    };
+
+    changeWithGetSet = () => {
+        this.withGetSet.val++;
     };
 
     render() {
@@ -51,6 +79,14 @@ export default class TrackTest extends Component {
                     Deep task id: {this.taskDeep.id} title: {this.taskDeep.title} deepProp: {this.taskDeep.nested.deepProp}
                     <button onClick={this.changeDeepTaskId}>Change deep task id</button>
                     <button onClick={this.changeDeepProp}>Change deep prop</button>
+                </div>
+                <div>
+                    Un-inited prop: {this.uninit}
+                    <button onClick={this.changeUninitProp}>Change un-init</button>
+                </div>
+                <div>
+                    With get/set: {this.withGetSet && this.withGetSet.val}
+                    <button onClick={this.changeWithGetSet}>Change with get/set</button>
                 </div>
             </div>
         );
