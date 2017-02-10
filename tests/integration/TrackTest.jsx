@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {track} from './../../src';
 
 export default class TrackTest extends Component {
+
     @track count = 0;
     @track title = 'Hello';
     @track task = {
@@ -9,7 +10,7 @@ export default class TrackTest extends Component {
     };
 
     @track taskDeep = {
-        id: 1,
+        id: 191,
         title: 'Some title',
         nested: {
             deepProp: 'val'

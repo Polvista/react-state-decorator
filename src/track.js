@@ -1,23 +1,29 @@
 import classPropertyDecorator from './classPropertyDecorator';
-import {getOrCreateTracker, getTracker} from './tracker';
+import {getTracker, makeTrackable} from './tracker';
 
 export function track(target, propertyName, descriptor) {
 
     function initialize(instance, initialValue) {
-        const tracker = getOrCreateTracker(instance);
-        tracker.values[propertyName] = initialValue;
+        const tracker = getTracker(instance);
+        const valueTracker = makeTrackable(initialValue);
+
+        if(valueTracker) {
+            valueTracker.notifyAboutChanges(tracker);
+        }
+
+        tracker.initValue(propertyName, initialValue);
+        tracker.onChange(() => {
+            // TODO track mount state
+            instance.forceUpdate();
+        });
     }
 
     function get() {
-        const tracker = getTracker(this);
-        return tracker.values[propertyName];
+        return getTracker(this).getValue(propertyName);
     }
 
     function set(val) {
-        const tracker = getTracker(this);
-        const isSame = tracker.values[propertyName] === val;
-        tracker.values[propertyName] = val;
-        !isSame && this.forceUpdate();
+        getTracker(this).setValue(propertyName, val);
     }
 
     return classPropertyDecorator(
