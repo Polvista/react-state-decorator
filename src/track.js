@@ -5,7 +5,7 @@ export function track(target, propertyName, descriptor) {
 
     function initialize(instance, initialValue) {
         const tracker = getTracker(instance);
-        const valueTracker = makeTrackable(initialValue);
+        const {tracker: valueTracker} = makeTrackable(initialValue);
 
         if(valueTracker) {
             valueTracker.notifyAboutChanges(tracker);

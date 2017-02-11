@@ -20,11 +20,13 @@ export function getTracker(instance) {
 
 export function makeTrackable(target) {
     if(isPrimitive(target)) {
-        return;
+        return {};
     }
 
     if(isTrackable(target)) {
-        return getTracker(target);
+        return {
+            tracker: getTracker(target)
+        };
     }
 
     if(isPlainObject(target)) {
@@ -37,7 +39,7 @@ export function makeTrackable(target) {
             }
 
             const propValue = target[propName];
-            const propTracker = makeTrackable(propValue);
+            const {tracker: propTracker} = makeTrackable(propValue);
             tracker.initValue(propName, propValue);
 
             //TODO existing get/set ?
@@ -57,9 +59,10 @@ export function makeTrackable(target) {
             }
         });
 
-        return tracker;
+        return {tracker};
     }
 
+    return {};
 }
 
 function isTrackable(target) {
@@ -79,7 +82,7 @@ class Tracker {
         const isSame = currValue === value;
 
         if(!isSame) {
-            const valueTracker = makeTrackable(value);
+            const {tracker: valueTracker} = makeTrackable(value);
             if(valueTracker) {
                 valueTracker.notifyAboutChanges(this);
             }
