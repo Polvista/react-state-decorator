@@ -23,6 +23,8 @@ export default class MobxTest extends React.Component {
 
     @observable classData = new SomeData();
 
+    @observable array = [];
+
     increment() {
         this.count++;
         this.count++;
@@ -96,6 +98,16 @@ export default class MobxTest extends React.Component {
                 <div>
                     Class data: {this.classData.prop} {this.classData.title}
                     <button onClick={this.changeClassData}>Change class data</button>
+                </div>
+                <div>
+                    Array test: {this.array.map((v, i) => <span key={i}>{v}, </span>)}
+                    <button onClick={() => console.log(this.array)}>Log Array</button>
+                    <button onClick={() => this.array.push(this.array.length + 1)}>Add item</button>
+                    <button onClick={() => this.array[0] = 1}>Set first</button>
+                    <button onClick={() => this.array[1] = 2}>Set Second</button>
+                    <button onClick={() => this.array[0]++}>Change first</button>
+                    <button onClick={() => this.array.length = 0}>Change length</button>
+                    <button onClick={() => this.array[100] = 100}>Set 100</button>
                 </div>
             </div>
         );
