@@ -1,5 +1,5 @@
-import {runLazyInitializers} from './classPropertyDecorator';
-import {addHiddenFinalProp, isPrimitive, isPlainObject, isUnique} from './utils';
+import {getTrackableArray} from './trackableArray';
+import {addHiddenFinalProp, isPrimitive, isPlainObject, isUnique, isArray} from './utils';
 
 const trackerProp = '__$tracker';
 
@@ -20,12 +20,16 @@ export function getTracker(instance) {
 
 export function makeTrackable(target) {
     if(isPrimitive(target)) {
-        return {};
+        //TODO may be  change to return target?
+        return {
+            value: target
+        };
     }
 
-    if(isTrackable(target)) {
+    if(isTracking(target)) {
         return {
-            tracker: getTracker(target)
+            tracker: getTracker(target),
+            value: target
         };
     }
 
@@ -38,8 +42,11 @@ export function makeTrackable(target) {
                 return;
             }
 
-            const propValue = target[propName];
-            const {tracker: propTracker} = makeTrackable(propValue);
+            const {
+                tracker: propTracker,
+                value: propValue
+            } = makeTrackable(target[propName]);
+
             tracker.initValue(propName, propValue);
 
             //TODO existing get/set ?
@@ -59,13 +66,26 @@ export function makeTrackable(target) {
             }
         });
 
-        return {tracker};
+        return {
+            tracker,
+            value: target
+        };
     }
 
-    return {};
+    if(isArray(target)) {
+        const trackableArray = getTrackableArray(target);
+        return {
+            tracker: getTracker(trackableArray),
+            value: trackableArray
+        };
+    }
+
+    return {
+        value: target
+    };
 }
 
-function isTrackable(target) {
+function isTracking(target) {
     return target[trackerProp] != null;
 }
 
@@ -82,26 +102,34 @@ class Tracker {
         const isSame = currValue === value;
 
         if(!isSame) {
-            const {tracker: valueTracker} = makeTrackable(value);
-            if(valueTracker) {
+            const {
+                tracker: valueTracker,
+                value: newValue
+            } = makeTrackable(value);
+
+            if(newValue)
+                value = newValue;
+
+            if(valueTracker)
                 valueTracker.notifyAboutChanges(this);
-            }
 
             const currTracker = getTracker(currValue);
-            if(currTracker) {
-                currTracker.stopListenChanges(this);
-            }
+            if(currTracker)
+                currTracker.stopListenChanges(this); //TODO test this
         }
 
         this.values[prop] = value;
 
-        if(!isSame) {
+        if(!isSame)
             this.reportChange();
-        }
     }
 
     initValue(prop, value) {
         this.values[prop] = value;
+    }
+
+    deleteValue(prop) {
+        delete this.values[prop];
     }
 
     getValue(prop) {

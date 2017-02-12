@@ -21,6 +21,8 @@ export default class TrackTest extends Component {
 
     @track withGetSet;
 
+    @track array = [1, 2, 3];
+
     componentDidMount() {
         this.uninit = 10;
 

@@ -16,6 +16,7 @@ export function addHiddenFinalProp(object, propName, value) {
     });
 }
 
+//TODO Boolean, Number, etc
 export function isPrimitive(value) {
     const type = typeof value;
     return value == null || (type != "object" && type != "function");
@@ -30,6 +31,10 @@ export function isPlainObject(target) {
         return false;
     const proto = Object.getPrototypeOf(target);
     return proto === Object.prototype || proto === null;
+}
+
+export function isArray(target) {
+    return Array.isArray(target);
 }
 
 export function isUnique(value, index, array) {
