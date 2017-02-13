@@ -10,11 +10,11 @@ export function track(target, propertyName, descriptor) {
             value
         } = makeTrackable(initialValue);
 
-        if(valueTracker) {
+        if(valueTracker)
             valueTracker.notifyAboutChanges(tracker);
-        }
 
         tracker.initValue(propertyName, value);
+        // TODO one callback
         tracker.onChange(() => {
             // TODO track mount state
             instance.forceUpdate();

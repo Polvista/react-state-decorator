@@ -16,7 +16,7 @@ export function addHiddenFinalProp(object, propName, value) {
     });
 }
 
-//TODO Boolean, Number, etc
+//TODO Boolean, Number, Dates, File, DomElements, etc
 export function isPrimitive(value) {
     const type = typeof value;
     return value == null || (type != "object" && type != "function");

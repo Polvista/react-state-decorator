@@ -73,18 +73,6 @@ describe('trackableArray tests', () => {
         let changesCount;
         let unsub;
 
-        function checkArraysHaveSameData() {
-            it('should have correct length', () => expect(trackableArray.length).to.be.equal(arrayCopy.length));
-            it('should have same Object.keys', () => expect(Object.keys(trackableArray)).to.be.eql(Object.keys(arrayCopy)));
-            it('should have same for in props', () => checkForInProps(trackableArray, arrayCopy));
-            it('should have hidden out of boundaries props', () => checkOutOfBoundariesProps(trackableArray));
-            it('should have same values', () => expect(trackableArray.slice()).to.be.eql(arrayCopy));
-        }
-        
-        function checkArrayChangedOnce() {
-            it('should have changed once', () => expect(changesCount).to.be.equal(1));
-        }
-
         beforeEach(() => {
             array = [1, 2, 3];
             arrayCopy = [1, 2, 3];
@@ -99,44 +87,65 @@ describe('trackableArray tests', () => {
             unsub && unsub();
         });
 
-        describe('#push', () => {
-            beforeEach(() => {
-                trackableArray.push(4);
-                arrayCopy.push(4);
-            });
+        function checkArraysHaveSameData() {
+            it('should have correct length', () => expect(trackableArray.length).to.be.equal(arrayCopy.length));
+            it('should have same Object.keys', () => expect(Object.keys(trackableArray)).to.be.eql(Object.keys(arrayCopy)));
+            it('should have same for in props', () => checkForInProps(trackableArray, arrayCopy));
+            it('should have hidden out of boundaries props', () => checkOutOfBoundariesProps(trackableArray));
+            it('should have same values', () => expect(trackableArray.slice()).to.be.eql(arrayCopy));
+        }
 
-            checkArraysHaveSameData();
-            checkArrayChangedOnce();
+        function checkArrayChangedOnce() {
+            it('should have changed once', () => expect(changesCount).to.be.equal(1));
+        }
+
+        function testCase(name, beforeEachFunc) {
+            describe(name, () => {
+                beforeEach(beforeEachFunc);
+
+                checkArraysHaveSameData();
+                checkArrayChangedOnce();
+            });
+        }
+
+        testCase('#push', () => {
+            trackableArray.push(4);
+            arrayCopy.push(4);
         });
 
-        describe('set length = 0', () => {
-            beforeEach(() => {
-                trackableArray.length = 0;
-                arrayCopy.length = 0;
-            });
-
-            checkArraysHaveSameData();
-            checkArrayChangedOnce();
+        testCase('#pop', () => {
+            trackableArray.pop();
+            arrayCopy.pop();
         });
 
-        describe('direct change', () => {
-            beforeEach(() => {
-                trackableArray[1] = 0;
-                arrayCopy[1] = 0;
-            });
-
-            checkArraysHaveSameData();
-            checkArrayChangedOnce();
+        testCase('#shift', () => {
+            trackableArray.shift(333);
+            arrayCopy.shift(333);
         });
 
-        describe('direct add', () => {
-            beforeEach(() => {
-                trackableArray[trackableArray.length] = 'new val';
-                arrayCopy[arrayCopy.length] = 'new val';
-            });
+        testCase('set length = 0', () => {
+            trackableArray.length = 0;
+            arrayCopy.length = 0;
+        });
 
-            checkArraysHaveSameData();
-            checkArrayChangedOnce();
+        testCase('direct change', () => {
+            trackableArray[1] = 0;
+            arrayCopy[1] = 0;
+        });
+
+        testCase('direct change first', () => {
+            trackableArray[0] = 99;
+            arrayCopy[0] = 99;
+        });
+
+        testCase('direct change last', () => {
+            trackableArray[trackableArray.length - 1] = 199;
+            arrayCopy[arrayCopy.length - 1] = 199;
+        });
+
+        testCase('direct add', () => {
+            trackableArray[trackableArray.length] = 'new val';
+            arrayCopy[arrayCopy.length] = 'new val';
         })
 
     });

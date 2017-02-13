@@ -1,35 +1,26 @@
 import {getTracker} from './tracker';
 
 export const outOfBoundariesTrackRange = 1;
+const ignoreChangesProp = '__$trackIgnoreChanges';
+const mutatingMethods = ['shift', 'push', 'pop'];
+
+const trackableArrayPrototype = Object.create(Array.prototype);
+mutatingMethods.forEach(defineTrackableArrayMethod);
 
 export function getTrackableArray(origArray) {
-    const spyArrayPrototype = Object.create(Array.prototype);
-
-    Object.defineProperty(spyArrayPrototype, 'push', {
-        configurable: true,
-        enumerable: false,
-        value(...args) {
-            return Array.prototype.push.apply(this, args);
-        }
-    });
-
-    const spyArray = Object.create(spyArrayPrototype);
-    const tracker = getTracker(spyArray);
-
-    //tracker.onChange(() => console.log('array changed'));
-
-    //console.log(spyArray);
+    const trackableArray = Object.create(trackableArrayPrototype);
+    const tracker = getTracker(trackableArray);
 
     // init array
     for(let i = 0; i < origArray.length; i++) {
-        defineTrackableProp(spyArray, i, tracker, false);
+        defineTrackableProp(trackableArray, i, tracker, false);
         tracker.initValue(i, origArray[i]); //TODO make trackable
     }
 
     tracker.initValue('length', origArray.length);
-    defineTrackableProp(spyArray, origArray.length, tracker, true);
 
-    Object.defineProperty(spyArray, 'length', {
+    defineTrackableProp(trackableArray, origArray.length, tracker, true);
+    Object.defineProperty(trackableArray, 'length', {
         configurable: true,
         enumerable: false,
         get() {
@@ -37,6 +28,7 @@ export function getTrackableArray(origArray) {
         },
         set(l){
             const prevLength = tracker.getValue('length');
+            console.log('set length', prevLength, l);
 
             if(prevLength > l) {
                 for(let i = l; i < prevLength; i++) {
@@ -69,8 +61,8 @@ export function getTrackableArray(origArray) {
         }
     });
 
-    (global || window).spyArray = spyArray;
-    return spyArray;
+    (global || window).trackableArray = trackableArray;
+    return trackableArray;
 }
 
 function defineTrackableProp(target, prop, tracker, isOutOfBoundaries) {
@@ -81,12 +73,36 @@ function defineTrackableProp(target, prop, tracker, isOutOfBoundaries) {
             return tracker.getValue(prop);
         },
         set(v) {
+            if(this[ignoreChangesProp]) {
+                console.log('ignoring');
+                tracker.initValue(prop, v); //TODO make trackable
+                return;
+            }
+
             if(isOutOfBoundaries) {
-                tracker.initValue(prop, v);
+                console.log('ouOB');
+                tracker.initValue(prop, v); //TODO make trackable
                 target.length = Number(prop) + 1;
             } else {
                 tracker.setValue(prop, v);
             }
+        }
+    });
+}
+
+function defineTrackableArrayMethod(name) {
+    Object.defineProperty(trackableArrayPrototype, name, {
+        configurable: true,
+        enumerable: false,
+        value() {
+            Object.defineProperty(this, ignoreChangesProp, {
+                configurable: true,
+                enumerable: false,
+                value: true
+            });
+            const result = Array.prototype[name].apply(this, arguments);
+            delete this[ignoreChangesProp];
+            return result;
         }
     });
 }
