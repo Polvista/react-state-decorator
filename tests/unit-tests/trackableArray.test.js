@@ -113,14 +113,29 @@ describe('trackableArray tests', () => {
             arrayCopy.push(4);
         });
 
+        testCase('#push multiple', () => {
+            trackableArray.push(4, 5, 6);
+            arrayCopy.push(4, 5, 6);
+        });
+
         testCase('#pop', () => {
             trackableArray.pop();
             arrayCopy.pop();
         });
 
         testCase('#shift', () => {
-            trackableArray.shift(333);
-            arrayCopy.shift(333);
+            trackableArray.shift();
+            arrayCopy.shift();
+        });
+
+        testCase('#unshift', () => {
+            trackableArray.unshift(333);
+            arrayCopy.unshift(333);
+        });
+
+        testCase('#unshift multiple', () => {
+            trackableArray.unshift(300, 301, 302);
+            arrayCopy.unshift(300, 301, 302);
         });
 
         testCase('set length = 0', () => {
