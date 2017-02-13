@@ -85,7 +85,7 @@ export function makeTrackable(target) {
     };
 }
 
-function isTracking(target) {
+export function isTracking(target) {
     return target[trackerProp] != null;
 }
 

@@ -1,59 +1,67 @@
 import {getTracker} from './tracker';
 
-const outOfBoundariesTrackRange = 1;
+export const outOfBoundariesTrackRange = 1;
 
 export function getTrackableArray(origArray) {
     const spyArrayPrototype = Object.create(Array.prototype);
 
-    spyArrayPrototype.push = function (...args) {
-        console.log('pushing');
-        return Array.prototype.push.apply(this, args);
-    };
+    Object.defineProperty(spyArrayPrototype, 'push', {
+        configurable: true,
+        enumerable: false,
+        value(...args) {
+            return Array.prototype.push.apply(this, args);
+        }
+    });
 
     const spyArray = Object.create(spyArrayPrototype);
     const tracker = getTracker(spyArray);
 
-    tracker.onChange(() => console.log('array changed'));
+    //tracker.onChange(() => console.log('array changed'));
 
-    console.log(spyArray);
+    //console.log(spyArray);
 
-    tracker.initValue('length', 0);
+    // init array
+    for(let i = 0; i < origArray.length; i++) {
+        defineTrackableProp(spyArray, i, tracker, false);
+        tracker.initValue(i, origArray[i]); //TODO make trackable
+    }
+
+    tracker.initValue('length', origArray.length);
+    defineTrackableProp(spyArray, origArray.length, tracker, true);
+
     Object.defineProperty(spyArray, 'length', {
         configurable: true,
-        enumerable: true,
+        enumerable: false,
         get() {
             return tracker.getValue('length');
         },
         set(l){
-            console.log('set length');
             const prevLength = tracker.getValue('length');
 
             if(prevLength > l) {
-                const props = Object.getOwnPropertyNames(this);
-                //TODO optimized for lopp
-                for(let i = 0; i < props.length; i++) {
-                    const propName = props[i];
-
-                    if(!isNaN(parseInt(propName))) {
-                        const arrayIndex = parseInt(propName);
-
-                        if(arrayIndex > l -1) {
-                            tracker.deleteValue(propName);
-                        } else if(arrayIndex > (l - 1 + outOfBoundariesTrackRange)) {
-                            delete this[propName];
-                        }
-                    }
-                }
-            } else if(prevLength < l) {
-                for(let i = prevLength; i < l; i++) {
-                    // new values
-
-                    //tracker.
+                for(let i = l; i < prevLength; i++) {
+                    // old values
+                    tracker.deleteValue(i);
                 }
 
                 for(let i = l; i < l + outOfBoundariesTrackRange; i++) {
                     // new track boundaries
-                    defineTrackableProp(this, i, tracker);
+                    defineTrackableProp(this, i, tracker, true);
+                }
+
+                for(let i = l + outOfBoundariesTrackRange; i < prevLength + outOfBoundariesTrackRange; i++) {
+                    // old boundaries
+                    delete this[i];
+                }
+            } else if(prevLength < l) {
+                for(let i = prevLength; i < l; i++) {
+                    // new values
+                    defineTrackableProp(this, i, tracker, false);
+                }
+
+                for(let i = l; i < l + outOfBoundariesTrackRange; i++) {
+                    // new track boundaries
+                    defineTrackableProp(this, i, tracker, true);
                 }
             }
 
@@ -61,19 +69,24 @@ export function getTrackableArray(origArray) {
         }
     });
 
-    window.spyArray = spyArray;
-    return origArray;
+    (global || window).spyArray = spyArray;
+    return spyArray;
 }
 
-function defineTrackableProp(target, prop, tracker) {
+function defineTrackableProp(target, prop, tracker, isOutOfBoundaries) {
     Object.defineProperty(target, prop, {
         configurable: true,
-        enumerable: true,
+        enumerable: !isOutOfBoundaries,
         get() {
             return tracker.getValue(prop);
         },
         set(v) {
-            tracker.setValue(prop, v);
+            if(isOutOfBoundaries) {
+                tracker.initValue(prop, v);
+                target.length = Number(prop) + 1;
+            } else {
+                tracker.setValue(prop, v);
+            }
         }
     });
 }

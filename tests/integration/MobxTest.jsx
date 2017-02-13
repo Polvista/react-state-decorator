@@ -101,7 +101,10 @@ export default class MobxTest extends React.Component {
                 </div>
                 <div>
                     Array test: {this.array.map((v, i) => <span key={i}>{v}, </span>)}
-                    <button onClick={() => console.log(this.array)}>Log Array</button>
+                    <button onClick={() => {
+                        console.log(this.array);
+                        window.mobxArray = this.array;
+                    }}>Log Array</button>
                     <button onClick={() => this.array.push(this.array.length + 1)}>Add item</button>
                     <button onClick={() => this.array[0] = 1}>Set first</button>
                     <button onClick={() => this.array[1] = 2}>Set Second</button>
