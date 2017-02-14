@@ -97,7 +97,15 @@ describe('trackableArray tests', () => {
             it('should have same for in props', () => checkForInProps(trackableArray, arrayCopy));
             it('should have hidden out of boundaries props', () => checkOutOfBoundariesProps(trackableArray));
             it('should have same values', () => expect(trackableArray.slice()).to.be.eql(arrayCopy));
-            it('should have same return values', () => expect(trackableReturn).to.be.deep.equal(arrayCopyReturn));
+            it('should have same return values', () => {
+                if(trackableReturn == null || !isNaN(Number(trackableReturn))) {
+                    expect(trackableReturn).to.be.equal(arrayCopyReturn)
+                } else if(trackableReturn instanceof Array) {
+                    expect(trackableReturn.slice()).to.be.deep.equal(arrayCopyReturn);
+                } else {
+                    expect('Wrong return').to.be.false;
+                }
+            });
         }
 
         function checkArrayChangedOnce() {
@@ -141,6 +149,11 @@ describe('trackableArray tests', () => {
         testCase('#unshift multiple', () => {
             trackableReturn = trackableArray.unshift(300, 301, 302, 303);
             arrayCopyReturn = arrayCopy.unshift(300, 301, 302, 303);
+        });
+
+        testCase('#reverse', () => {
+            trackableReturn = trackableArray.reverse();
+            arrayCopyReturn = arrayCopy.reverse();
         });
 
         testCase('set length = 0', () => {

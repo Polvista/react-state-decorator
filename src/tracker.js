@@ -125,8 +125,12 @@ class Tracker {
             this.reportChange();
     }
 
-    initValue(prop, value) {
+    setValueSilently(prop, value) {
         this.values[prop] = value;
+    }
+
+    initValue(prop, value) {
+        this.setValueSilently(prop, value);
     }
 
     deleteValue(prop) {
