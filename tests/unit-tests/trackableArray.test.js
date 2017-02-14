@@ -72,6 +72,8 @@ describe('trackableArray tests', () => {
         let tracker;
         let changesCount;
         let unsub;
+        let trackableReturn;
+        let arrayCopyReturn;
 
         beforeEach(() => {
             array = [1, 2, 3];
@@ -85,6 +87,8 @@ describe('trackableArray tests', () => {
 
         afterEach(() => {
             unsub && unsub();
+            trackableReturn = null;
+            arrayCopyReturn = null;
         });
 
         function checkArraysHaveSameData() {
@@ -93,6 +97,7 @@ describe('trackableArray tests', () => {
             it('should have same for in props', () => checkForInProps(trackableArray, arrayCopy));
             it('should have hidden out of boundaries props', () => checkOutOfBoundariesProps(trackableArray));
             it('should have same values', () => expect(trackableArray.slice()).to.be.eql(arrayCopy));
+            it('should have same return values', () => expect(trackableReturn).to.be.deep.equal(arrayCopyReturn));
         }
 
         function checkArrayChangedOnce() {
@@ -109,33 +114,33 @@ describe('trackableArray tests', () => {
         }
 
         testCase('#push', () => {
-            trackableArray.push(4);
-            arrayCopy.push(4);
+            trackableReturn = trackableArray.push(4);
+            arrayCopyReturn = arrayCopy.push(4);
         });
 
         testCase('#push multiple', () => {
-            trackableArray.push(4, 5, 6);
-            arrayCopy.push(4, 5, 6);
+            trackableReturn = trackableArray.push(4, 5, 6);
+            arrayCopyReturn = arrayCopy.push(4, 5, 6);
         });
 
         testCase('#pop', () => {
-            trackableArray.pop();
-            arrayCopy.pop();
+            trackableReturn = trackableArray.pop();
+            arrayCopyReturn = arrayCopy.pop();
         });
 
         testCase('#shift', () => {
-            trackableArray.shift();
-            arrayCopy.shift();
+            trackableReturn = trackableArray.shift();
+            arrayCopyReturn = arrayCopy.shift();
         });
 
         testCase('#unshift', () => {
-            trackableArray.unshift(333);
-            arrayCopy.unshift(333);
+            trackableReturn = trackableArray.unshift(333);
+            arrayCopyReturn = arrayCopy.unshift(333);
         });
 
         testCase('#unshift multiple', () => {
-            trackableArray.unshift(300, 301, 302);
-            arrayCopy.unshift(300, 301, 302);
+            trackableReturn = trackableArray.unshift(300, 301, 302, 303);
+            arrayCopyReturn = arrayCopy.unshift(300, 301, 302, 303);
         });
 
         testCase('set length = 0', () => {
