@@ -98,10 +98,10 @@ describe('trackableArray tests', () => {
             it('should have hidden out of boundaries props', () => checkOutOfBoundariesProps(trackableArray));
             it('should have same values', () => expect(trackableArray.slice()).to.be.eql(arrayCopy));
             it('should have same return values', () => {
-                if(trackableReturn == null || !isNaN(Number(trackableReturn))) {
+                if(trackableReturn instanceof Array) {
+                    expect(trackableReturn.slice()).to.be.eql(arrayCopyReturn);
+                } else if(trackableReturn == null || !isNaN(Number(trackableReturn))) {
                     expect(trackableReturn).to.be.equal(arrayCopyReturn)
-                } else if(trackableReturn instanceof Array) {
-                    expect(trackableReturn.slice()).to.be.deep.equal(arrayCopyReturn);
                 } else {
                     expect('Wrong return').to.be.false;
                 }
@@ -184,6 +184,31 @@ describe('trackableArray tests', () => {
         testCase('#copyWithin with end', () => {
             trackableReturn = trackableArray.copyWithin(0, 1, 2);
             arrayCopyReturn = arrayCopy.copyWithin(0, 1, 2);
+        });
+
+        testCase('#splice', () => {
+            trackableReturn = trackableArray.splice(0);
+            arrayCopyReturn = arrayCopy.splice(0);
+        });
+
+        testCase('#splice 2', () => {
+            trackableReturn = trackableArray.splice(1);
+            arrayCopyReturn = arrayCopy.splice(1);
+        });
+
+        testCase('#splice with delete count', () => {
+            trackableReturn = trackableArray.splice(0, 1);
+            arrayCopyReturn = arrayCopy.splice(0, 1);
+        });
+
+        testCase('#splice with insert', () => {
+            trackableReturn = trackableArray.splice(0, 1, 10);
+            arrayCopyReturn = arrayCopy.splice(0, 1, 10);
+        });
+
+        testCase('#splice with long insert', () => {
+            trackableReturn = trackableArray.splice(0, 1, 10, 11, 12, 13, 14, 15, 16, 17);
+            arrayCopyReturn = arrayCopy.splice(0, 1, 10, 11, 12, 13, 14, 15, 16, 17);
         });
 
         testCase('set length = 0', () => {
