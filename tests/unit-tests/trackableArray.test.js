@@ -156,6 +156,16 @@ describe('trackableArray tests', () => {
             arrayCopyReturn = arrayCopy.reverse();
         });
 
+        testCase('#sort', () => {
+            trackableReturn = trackableArray.sort((a, b) => a == 1 ? false : b - a);
+            arrayCopyReturn = arrayCopy.sort((a, b) => a == 1 ? false : b - a);
+        });
+
+        testCase('#fill', () => {
+            trackableReturn = trackableArray.fill(8);
+            arrayCopyReturn = arrayCopy.fill(8);
+        });
+
         testCase('set length = 0', () => {
             trackableArray.length = 0;
             arrayCopy.length = 0;
