@@ -1,1 +1,1 @@
-export {track} from './track';
+export {track} from './trackDecorator';

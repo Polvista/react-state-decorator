@@ -12,7 +12,7 @@ export function getTracker(instance) {
     if(instance[trackerProp])
         return instance[trackerProp];
 
-    const tracker = new Tracker(instance);
+    const tracker = new Tracker();
     addHiddenFinalProp(instance, trackerProp, tracker);
 
     return tracker;
@@ -82,11 +82,10 @@ export function isTracking(target) {
 
 class Tracker {
 
-    constructor(target) {
+    constructor() {
         this.values = {};
         this.callbacks = [];
         this.listeners = [];
-        this.target = target;
     }
 
     _setValue(prop, value, shouldReport = true) {

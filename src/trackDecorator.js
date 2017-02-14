@@ -1,5 +1,5 @@
 import classPropertyDecorator from './classPropertyDecorator';
-import {getTracker, makeTrackable} from './tracker';
+import {getTracker} from './tracker';
 
 export function track(target, propertyName, descriptor) {
 
