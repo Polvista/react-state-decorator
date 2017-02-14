@@ -5,15 +5,8 @@ export function track(target, propertyName, descriptor) {
 
     function initialize(instance, initialValue) {
         const tracker = getTracker(instance);
-        const {
-            tracker: valueTracker,
-            value
-        } = makeTrackable(initialValue);
+        tracker.initValue(propertyName, initialValue);
 
-        if(valueTracker)
-            valueTracker.notifyAboutChanges(tracker);
-
-        tracker.initValue(propertyName, value);
         // TODO one callback
         tracker.onChange(() => {
             // TODO track mount state

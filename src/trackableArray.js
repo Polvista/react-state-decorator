@@ -14,7 +14,7 @@ export function getTrackableArray(origArray) {
     // init array
     for(let i = 0; i < origArray.length; i++) {
         defineTrackableProp(trackableArray, i, tracker, false);
-        tracker.initValue(i, origArray[i]); //TODO make trackable
+        tracker.initValue(i, origArray[i]);
     }
 
     tracker.initValue('length', origArray.length);
@@ -28,7 +28,6 @@ export function getTrackableArray(origArray) {
         },
         set(l){
             const prevLength = tracker.getValue('length');
-            console.log('set length', prevLength, l);
 
             if(prevLength > l) {
                 for(let i = l; i < prevLength; i++) {
@@ -67,7 +66,6 @@ export function getTrackableArray(origArray) {
         }
     });
 
-    (global || window).trackableArray = trackableArray;
     return trackableArray;
 }
 
@@ -80,14 +78,12 @@ function defineTrackableProp(target, prop, tracker, isOutOfBoundaries) {
         },
         set(v) {
             if(this[ignoreChangesProp]) {
-                console.log('ignoring');
-                tracker.initValue(prop, v); //TODO make trackable
+                tracker.initValue(prop, v);
                 return;
             }
 
             if(isOutOfBoundaries) {
-                console.log('ouOB');
-                tracker.initValue(prop, v); //TODO make trackable
+                tracker.initValue(prop, v);
                 target.length = Number(prop) + 1;
             } else {
                 tracker.setValue(prop, v);

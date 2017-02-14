@@ -42,12 +42,7 @@ export function makeTrackable(target) {
                 return;
             }
 
-            const {
-                tracker: propTracker,
-                value: propValue
-            } = makeTrackable(target[propName]);
-
-            tracker.initValue(propName, propValue);
+            tracker.initValue(propName, target[propName]);
 
             //TODO existing get/set ?
             Object.defineProperty(target, propName, {
@@ -60,10 +55,6 @@ export function makeTrackable(target) {
                     tracker.setValue(propName, value);
                 }
             });
-
-            if(propTracker) {
-                propTracker.notifyAboutChanges(tracker);
-            }
         });
 
         return {
@@ -98,7 +89,7 @@ class Tracker {
         this.target = target;
     }
 
-    setValue(prop, value) {
+    _setValue(prop, value, shouldReport = true) {
         const currValue = this.getValue(prop);
         const isSame = currValue === value;
 
@@ -121,16 +112,20 @@ class Tracker {
 
         this.values[prop] = value;
 
-        if(!isSame)
+        if(shouldReport && !isSame)
             this.reportChange();
     }
 
+    setValue(prop, value) {
+        this._setValue(prop, value);
+    }
+
     setValueSilently(prop, value) {
-        this.values[prop] = value;
+        this._setValue(prop, value, false);
     }
 
     initValue(prop, value) {
-        this.setValueSilently(prop, value);
+        this._setValue(prop, value, false);
     }
 
     deleteValue(prop) {
