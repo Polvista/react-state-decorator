@@ -238,6 +238,63 @@ describe('trackableArray tests', () => {
 
     });
 
+    describe('deep changes', () => {
+        let array;
+        let trackableArray;
+        let tracker;
+        let changesCount;
+        let unsub;
+
+        beforeEach(() => {
+            array = [{ id: 1 }, { id: 2, title: '123' }, { id: 3, title: '1234', nested: { prop: 11 } }];
+            trackableArray = getTrackableArray(array);
+            tracker = getTracker(trackableArray);
+
+            changesCount = 0;
+            unsub = tracker.onChange(() => changesCount++);
+        });
+
+        afterEach(() => {
+            unsub && unsub();
+        });
+
+        function testCase(name, beforeEachFunc, realChangesCount = 1) {
+            describe(name, () => {
+                beforeEach(beforeEachFunc);
+
+                it(`should have changed ${realChangesCount} time`, () => expect(changesCount).to.be.equal(realChangesCount));
+            });
+        }
+
+        testCase('deep prop change', () => trackableArray[0].id++ );
+        testCase('deep string prop change', () => trackableArray[1].title = 'new val' );
+        testCase('deep nested prop change', () => trackableArray[2].nested.prop = 'new val' );
+        testCase('deep added change', () => {
+            const newObj = { newObjProp: 'val' };
+            trackableArray.push(newObj);
+            newObj.newObjProp = 'new val';
+        }, 2);
+
+        testCase('deleted items not tracked anymore', () => {
+            const deletedObj = trackableArray.splice(0, 1);
+            deletedObj.id = 999;
+        });
+
+        testCase('nested array change', () => {
+            trackableArray.unshift([1, 2, 3]);
+            trackableArray[0].push(4);
+        }, 2);
+
+        testCase('deep nested array change', () => {
+            trackableArray.unshift({
+                arr: [1, 2, 3]
+            });
+
+            trackableArray[0].arr.push(4);
+        }, 2);
+
+    });
+
 });
 
 
