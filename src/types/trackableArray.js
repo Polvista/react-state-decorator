@@ -1,4 +1,4 @@
-import {getTracker} from './tracker';
+import {getTracker} from '../tracker';
 
 export const outOfBoundariesTrackRange = 1;
 const ignoreChangesProp = '__$trackIgnoreChanges';
@@ -65,6 +65,8 @@ export function getTrackableArray(origArray) {
 
         }
     });
+
+    (global || window).trArr = trackableArray;
 
     return trackableArray;
 }

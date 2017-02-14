@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {getTrackableArray, outOfBoundariesTrackRange} from '../../src/trackableArray';
+import {getTrackableArray, outOfBoundariesTrackRange} from '../../src/types/trackableArray';
 import {getTracker, isTracking} from '../../src/tracker';
 
 function checkForInProps(trackable, arr) {
@@ -276,7 +276,7 @@ describe('trackableArray tests', () => {
         }, 2);
 
         testCase('deleted items not tracked anymore', () => {
-            const deletedObj = trackableArray.splice(0, 1);
+            const deletedObj = trackableArray.splice(0, 1)[0];
             deletedObj.id = 999;
         });
 

@@ -1,4 +1,4 @@
-import {getTrackableArray} from './trackableArray';
+import {getTrackableArray} from './types/trackableArray';
 import {addHiddenFinalProp, isPrimitive, isPlainObject, isUnique, isArray} from './utils';
 
 const trackerProp = '__$tracker';
