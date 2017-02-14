@@ -166,6 +166,16 @@ describe('trackableArray tests', () => {
             arrayCopyReturn = arrayCopy.fill(8);
         });
 
+        testCase('#fill with start', () => {
+            trackableReturn = trackableArray.fill(8, 1);
+            arrayCopyReturn = arrayCopy.fill(8, 1);
+        });
+
+        testCase('#fill with end', () => {
+            trackableReturn = trackableArray.fill(8, 1, 2);
+            arrayCopyReturn = arrayCopy.fill(8, 1, 2);
+        });
+
         testCase('set length = 0', () => {
             trackableArray.length = 0;
             arrayCopy.length = 0;
