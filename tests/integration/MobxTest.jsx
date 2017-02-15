@@ -25,6 +25,16 @@ export default class MobxTest extends React.Component {
 
     @observable array = [];
 
+    @observable sameObjTrick;
+
+    componentWillMount() {
+        const obj = observable({ id: 11 });
+        this.sameObjTrick = {
+            selected: obj,
+            all: [obj]
+        };
+    }
+
     increment() {
         this.count++;
         this.count++;
@@ -111,6 +121,10 @@ export default class MobxTest extends React.Component {
                     <button onClick={() => this.array[0]++}>Change first</button>
                     <button onClick={() => this.array.length = 0}>Change length</button>
                     <button onClick={() => this.array[100] = 100}>Set 100</button>
+                </div>
+                <div>
+                    Same obj trick: {this.sameObjTrick.selected.id}, {this.sameObjTrick.all[0].id}
+                    <button onClick={() => setTimeout(() => this.sameObjTrick.selected.id++, 0)}>Change id</button>
                 </div>
             </div>
         );
