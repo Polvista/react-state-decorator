@@ -13,7 +13,7 @@ export function getTracker(instance) {
     if(instance[trackerProp])
         return instance[trackerProp];
 
-    const tracker = new Tracker();
+    const tracker = new Tracker(instance);
     addHiddenFinalProp(instance, trackerProp, tracker);
 
     return tracker;
@@ -25,10 +25,11 @@ export function isTracking(target) {
 
 class Tracker {
 
-    constructor() {
+    constructor(target) {
         this.values = {};
         this.callbacks = [];
-        this.listeners = [];
+        this.subscriptions = {};
+        this.target = target;
     }
 
     // private
@@ -46,12 +47,10 @@ class Tracker {
             if(newValue)
                 value = newValue;
 
-            if(valueTracker)
-                valueTracker.notifyAboutChanges(this);
+            this.stopListen(prop);
 
-            const currTracker = getTracker(currValue);
-            if(currTracker)
-                currTracker.stopListenChanges(this); //TODO test this
+            if(valueTracker)
+                this.subscriptions[prop] = valueTracker.onChange(() => this.reportChange(prop));
         }
 
         this.values[prop] = value;
@@ -111,7 +110,13 @@ class Tracker {
     }
 
     deleteValue(prop) {
+        this.stopListen(prop);
         delete this.values[prop];
+    }
+
+    stopListen(prop) {
+        this.subscriptions[prop] && this.subscriptions[prop]();
+        delete this.subscriptions[prop];
     }
 
     getValue(prop) {
@@ -128,19 +133,11 @@ class Tracker {
         };
     }
 
-    notifyAboutChanges(tracker) {
-        this.listeners.push(tracker);
-    }
-
-    stopListenChanges(tracker) {
-        const index = this.listeners.indexOf(tracker);
-        if(index > -1) {
-            this.listeners.splice(index, 1);
+    reportChange(changedProp) {
+        if(changedProp && Object.getOwnPropertyDescriptor(this.target, changedProp) == null) {
+            return;
         }
-    }
 
-    reportChange() {
-        this.listeners.filter(isUnique).forEach(tracker => tracker.reportChange());
         this.callbacks.forEach(callback => callback());
     }
 

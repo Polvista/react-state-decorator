@@ -276,8 +276,9 @@ describe('trackableArray tests', () => {
         }, 2);
 
         testCase('deleted items not tracked anymore', () => {
-            const deletedObj = trackableArray.splice(0, 1)[0];
-            deletedObj.id = 999;
+            const first = trackableArray[0];
+            trackableArray.length = 0;
+            first.id = 999;
         });
 
         testCase('nested array change', () => {
