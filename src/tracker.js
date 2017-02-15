@@ -134,7 +134,10 @@ class Tracker {
     }
 
     reportChange(changedProp) {
+        // TODO change report algorithm so changes on objects located multiple times inside target would result in one change event
         if(changedProp && Object.getOwnPropertyDescriptor(this.target, changedProp) == null) {
+            // property was deleted
+            this.stopListen(changedProp);
             return;
         }
 

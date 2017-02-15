@@ -166,7 +166,7 @@ describe('trackableObject tests', () => {
         testCase('track new arrays', obj => {
             obj.title = [1,2,3];
 
-            obj.title.push('changed')
+            obj.title.push('changed');
         }, 2);
 
         testCase('dont track changed props', obj => {
