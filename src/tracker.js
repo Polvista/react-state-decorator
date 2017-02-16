@@ -123,14 +123,22 @@ class Tracker {
         return this.values[prop];
     }
 
-    onChange(callback) {
+    onChange(callback, isRerenderCallback) {
         this.callbacks.push(callback);
+
+        if(isRerenderCallback)
+            this.rerenderCallbackSetted = true;
+
         return () => {
             const index = this.callbacks.indexOf(callback);
             if(index > -1) {
                 this.callbacks.splice(index, 1);
             }
         };
+    }
+
+    isRerenderCallbackSetted() {
+        return this.rerenderCallbackSetted;
     }
 
     reportChange(changedProp) {

@@ -7,10 +7,19 @@ export function track(target, propertyName, descriptor) {
         const tracker = getTracker(instance);
         tracker.initValue(propertyName, initialValue);
 
-        // TODO one callback
-        tracker.onChange(() => {
-            // TODO track mount state
-            instance.forceUpdate();
+        if(!tracker.isRerenderCallbackSetted()) {
+            tracker.onChange(() => {
+                // TODO track mount state
+                instance.forceUpdate();
+            }, true);
+        }
+
+        console.log('define prop', propertyName);
+        Object.defineProperty(instance, propertyName, {
+            configurable: true,
+            enumerable: true,
+            get,
+            set
         });
     }
 

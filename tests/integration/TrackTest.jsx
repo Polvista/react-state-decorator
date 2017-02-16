@@ -24,6 +24,8 @@ export default class TrackTest extends Component {
     @track array = [1, 2, 3];
 
     componentDidMount() {
+        window.trackTest = this;
+
         this.uninit = 10;
 
         let val = 3;

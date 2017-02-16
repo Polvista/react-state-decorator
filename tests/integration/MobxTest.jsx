@@ -28,6 +28,8 @@ export default class MobxTest extends React.Component {
     @observable sameObjTrick;
 
     componentWillMount() {
+        window.mobxTest = this;
+
         const obj = observable({ id: 11 });
         this.sameObjTrick = {
             selected: obj,
