@@ -30,6 +30,8 @@ class Tracker {
         this.callbacks = [];
         this.subscriptions = {};
         this.target = target;
+        this.waitingForActionsToEnd = false;
+        this.rerenderCallbackSetted = false;
     }
 
     // private
@@ -139,6 +141,14 @@ class Tracker {
 
     isRerenderCallbackSetted() {
         return this.rerenderCallbackSetted;
+    }
+
+    isWaitingForActionsToEnd() {
+        return this.waitingForActionsToEnd;
+    }
+
+    setWaitingForActionsToEnd(value) {
+        this.waitingForActionsToEnd = value;
     }
 
     reportChange(changedProp) {

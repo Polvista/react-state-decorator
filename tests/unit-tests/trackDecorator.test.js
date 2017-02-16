@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {track} from '../../src';
+import {track, action} from '../../src';
 
 class TestComponent {
 
@@ -94,5 +94,56 @@ describe('track decorator tests', () => {
             origList.push(11);
         }, component => component.list);
 
+    });
+
+    describe('with action', () => {
+
+        describe('as function', () => {
+            let component;
+            let exception;
+
+            function testCase(name, func, extra = () => 0) {
+                describe(name, () => {
+                    beforeEach(() => {
+                        component = new TestComponent();
+                        try{
+                            action(func)();
+                        } catch(e) {
+                            exception = e;
+                        }
+                    });
+
+                    it('should change once', () => expect(component.changed).to.equal(1));
+                    extra();
+                });
+            }
+
+            testCase('action test', () => {
+                component.strProp = '';
+                component.list.push(11);
+                component.object.deep.deepArr[0].deepValue = 'new val';
+                component.object.deep.deepArr.push('new val');
+            });
+
+            testCase('action test nested calls', () => {
+                component.strProp = '';
+                action(() => {
+                    component.list.push(11);
+                    action(() => {
+                        component.object.deep.deepArr[0].deepValue = 'new val';
+                        component.object.deep.deepArr.push('new val')
+                    })();
+                })();
+            });
+
+            testCase('with exception', () => {
+                component.strProp = 'new val';
+                component.list.push(11);
+                throw new Error('some fail');
+            }, () => it('should throw exception', () => expect(exception.message).to.equal('some fail')))
+
+        });
+
+        
     });
 });

@@ -1,5 +1,6 @@
 import classPropertyDecorator from './classPropertyDecorator';
 import {getTracker} from './tracker';
+import {globalState} from './globalState';
 
 export function track(target, propertyName, descriptor) {
 
@@ -9,6 +10,19 @@ export function track(target, propertyName, descriptor) {
 
         if(!tracker.isRerenderCallbackSetted()) {
             tracker.onChange(() => {
+                if(globalState.startedActions > 0) {
+                    //TODO refactor to trackers have ids logic
+                    if(!tracker.isWaitingForActionsToEnd()) {
+                        tracker.setWaitingForActionsToEnd(true);
+                        globalState.afterActionsEndedCallbacks.push(() => {
+                            tracker.setWaitingForActionsToEnd(false);
+                            instance.forceUpdate();
+                        });
+                    }
+
+                    return;
+                }
+
                 // TODO track mount state
                 instance.forceUpdate();
             }, true);
