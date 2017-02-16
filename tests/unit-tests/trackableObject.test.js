@@ -72,6 +72,7 @@ describe('trackableObject tests', () => {
             expect(Object.getOwnPropertyDescriptor(trackableObject, 'unwritable').writable).to.be.false;
         });
         it('should have same values', () => expect(trackableObject).to.be.deep.equal(objectCopy));
+        it('should work with JSON.stringify()', () => expect(JSON.stringify(trackableObject)).to.be.equal(JSON.stringify(objectCopy)));
 
     });
 
