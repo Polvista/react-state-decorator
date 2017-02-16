@@ -14,7 +14,6 @@ export function track(target, propertyName, descriptor) {
             }, true);
         }
 
-        console.log('define prop', propertyName);
         Object.defineProperty(instance, propertyName, {
             configurable: true,
             enumerable: true,

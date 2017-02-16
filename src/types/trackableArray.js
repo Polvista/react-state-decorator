@@ -6,6 +6,13 @@ const mutatingMethods = ['shift', 'push', 'pop', 'unshift', 'reverse', 'sort', '
 
 const trackableArrayPrototype = Object.create(Array.prototype);
 mutatingMethods.forEach(defineTrackableArrayMethod);
+Object.defineProperty(trackableArrayPrototype, 'toJSON', {
+    configurable: true,
+    enumerable: false,
+    value() {
+        return this.slice();
+    }
+});
 
 export function getTrackableArray(origArray) {
     const trackableArray = Object.create(trackableArrayPrototype);

@@ -63,6 +63,8 @@ describe('trackableArray tests', () => {
         it('should have same for in props', () => checkForInProps(trackableArray, array));
         it('should have hidden out of boundaries props', () => checkOutOfBoundariesProps(trackableArray));
         it('should slice like array', () => expect(trackableArray.slice()).to.be.eql(array));
+        it('should work with JSON.stringify()', () => expect(JSON.stringify(trackableArray)).to.be.equal(JSON.stringify(array)));
+
     });
 
     describe('changes', () => {
