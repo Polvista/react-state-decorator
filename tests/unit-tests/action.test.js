@@ -24,4 +24,32 @@ describe('action tests', () => {
 
     });
 
+    describe('decorator', () => {
+        let calledWith;
+        let callResult;
+        let contextValue;
+
+        class TestClass {
+
+            context = 10;
+
+            @action myMethod(param1, param2) {
+                calledWith = [param1, param2];
+                contextValue = this.context;
+                return param1 + param2;
+            }
+
+        }
+
+        before(() => {
+            const instance = new TestClass();
+            callResult = instance.myMethod(5, 10);
+        });
+
+        it('should pass params', () => expect(calledWith).to.eql([5, 10]));
+        it('should have correct context', () => expect(contextValue).to.eql(10));
+        it('should return value', () => expect(callResult).to.eql(15));
+
+    });
+
 });

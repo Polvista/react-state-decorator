@@ -86,6 +86,26 @@ export default class TrackTest extends Component {
 
     changeWithGetSet = () => this.withGetSet.val++;
 
+    @action changeWithDecoratedAction() {
+        this.objForActionTest.id++;
+        this.objForActionTest.id++;
+    }
+
+    @action changeWithNestedDecoratedAction() {
+        this.objForActionTest.id++;
+        this.objForActionTest.id++;
+        action(() => {
+            this.objForActionTest.id++;
+            this.objForActionTest.id++;
+        })()
+    }
+
+    @action changeWithDecoratedActionAndException() {
+        this.objForActionTest.id++;
+        this.objForActionTest.id++;
+        throw new Error('fail');
+    }
+
     render() {
         console.log('render');
         return (
@@ -137,6 +157,18 @@ export default class TrackTest extends Component {
                             this.objForActionTest.id++;
                         }));
                     }}>Change</button>
+                </div>
+                <div>
+                    Change with decorated action: {this.objForActionTest.id}
+                    <button onClick={() => this.changeWithDecoratedAction()}>Change</button>
+                </div>
+                <div>
+                    Change with nested decorated action: {this.objForActionTest.id}
+                    <button onClick={() => this.changeWithNestedDecoratedAction()}>Change</button>
+                </div>
+                <div>
+                    Change with decorated action and exception: {this.objForActionTest.id}
+                    <button onClick={() => this.changeWithDecoratedActionAndException()}>Change</button>
                 </div>
             </div>
         );

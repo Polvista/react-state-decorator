@@ -24,6 +24,30 @@ class TestComponent {
 
     @track uninit;
 
+    @action changeSomething() {
+        this.id++;
+        this.id++;
+        this.strProp = 'new val';
+        this.list.push({id: 5});
+    }
+
+    @action changeWithInnerActions() {
+        this.id++;
+        action(() => {
+            this.id++;
+            action(() => {
+                this.strProp = 'new val';
+                action(() => this.list.push({id: 5}))();
+            })();
+        })();
+    }
+
+    @action changeWithException() {
+        this.id++;
+        this.strProp = 'new val';
+        throw new Error('Something wrong');
+    }
+
     forceUpdate() {
         this.changed++;
     }
@@ -142,6 +166,36 @@ describe('track decorator tests', () => {
                 throw new Error('some fail');
             }, () => it('should throw exception', () => expect(exception.message).to.equal('some fail')))
 
+        });
+
+        describe('as decorator', () => {
+            let component;
+            let exception;
+
+            function testCase(name, func, extra = () => 0) {
+                describe(name, () => {
+                    beforeEach(() => {
+                        component = new TestComponent();
+                        try{
+                            func();
+                        } catch(e) {
+                            exception = e;
+                        }
+                    });
+
+                    it('should change once', () => expect(component.changed).to.equal(1));
+                    extra();
+                });
+            }
+
+            testCase('@action test', () => component.changeSomething());
+
+            testCase('@action with inner actions', () => component.changeWithInnerActions());
+
+            testCase('@action with exception',
+                () => component.changeWithException(),
+                () => it('should throw exception', () => expect(exception.message).to.equal('Something wrong'))
+            );
         });
 
         
