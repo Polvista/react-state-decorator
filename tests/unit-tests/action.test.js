@@ -28,6 +28,7 @@ describe('action tests', () => {
         let calledWith;
         let callResult;
         let contextValue;
+        let bindedContextValue;
 
         class TestClass {
 
@@ -39,15 +40,25 @@ describe('action tests', () => {
                 return param1 + param2;
             }
 
+            @action myMethod2() {
+                bindedContextValue = this.context;
+            }
+
+            constructor() {
+                this.myMethod2 = this.myMethod2.bind(this);
+            }
+
         }
 
         before(() => {
             const instance = new TestClass();
             callResult = instance.myMethod(5, 10);
+            instance.myMethod2();
         });
 
         it('should pass params', () => expect(calledWith).to.eql([5, 10]));
         it('should have correct context', () => expect(contextValue).to.eql(10));
+        it('should have correct context after bind', () => expect(bindedContextValue).to.eql(10));
         it('should return value', () => expect(callResult).to.eql(15));
 
     });
