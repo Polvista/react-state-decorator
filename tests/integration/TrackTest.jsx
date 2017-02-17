@@ -76,25 +76,15 @@ export default class TrackTest extends Component {
         this.count++;
     }
 
-    changeTask = () => {
-        this.task = { id: 2 };
-    };
+    changeTask = () => this.task = { id: 2 };
 
-    changeDeepTaskId = () => {
-        this.taskDeep.id++;
-    };
+    changeDeepTaskId = () => this.taskDeep.id++;
 
-    changeDeepProp = () => {
-        this.taskDeep.nested.deepProp += 1;
-    };
+    changeDeepProp = () => this.taskDeep.nested.deepProp += 1;
 
-    changeUninitProp = () => {
-        this.uninit++;
-    };
+    changeUninitProp = () => this.uninit++;
 
-    changeWithGetSet = () => {
-        this.withGetSet.val++;
-    };
+    changeWithGetSet = () => this.withGetSet.val++;
 
     render() {
         console.log('render');
