@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {track} from './../../src';
+import {track, action} from './../../src';
 
 const ObjComponent = ({obj}) => (
     <div onClick={() => {
@@ -47,6 +47,10 @@ export default class TrackTest extends Component {
 
     @track objForChildClassComponent = {
         id: 200
+    };
+
+    @track objForActionTest = {
+        id: 300
     };
 
     componentDidMount() {
@@ -125,6 +129,24 @@ export default class TrackTest extends Component {
                 <div>
                     Child class component:
                     <ObjCLassComponent obj={this.objForChildClassComponent} />
+                </div>
+                <div>
+                    Change without action: {this.objForActionTest.id}
+                    <button onClick={() => {
+                        setTimeout(() => {
+                            this.objForActionTest.id++;
+                            this.objForActionTest.id++;
+                        });
+                    }}>Change</button>
+                </div>
+                <div>
+                    Change with action: {this.objForActionTest.id}
+                    <button onClick={() => {
+                        setTimeout(action(() => {
+                            this.objForActionTest.id++;
+                            this.objForActionTest.id++;
+                        }));
+                    }}>Change</button>
                 </div>
             </div>
         );
