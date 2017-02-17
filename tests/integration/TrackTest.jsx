@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {track, action} from './../../src';
+import {track, action, addTrackableProp} from './../../src';
 
 const ObjComponent = ({obj}) => (
     <div onClick={() => {
@@ -51,6 +51,10 @@ export default class TrackTest extends Component {
 
     @track objForActionTest = {
         id: 300
+    };
+
+    @track addDeleteObj = {
+        id: 15
     };
 
     componentDidMount() {
@@ -169,6 +173,12 @@ export default class TrackTest extends Component {
                 <div>
                     Change with decorated action and exception: {this.objForActionTest.id}
                     <button onClick={() => this.changeWithDecoratedActionAndException()}>Change</button>
+                </div>
+                <div>
+                    Add/delete prop test:
+                    added: {this.addDeleteObj.addedVal && this.addDeleteObj.addedVal.id }
+                    <button onClick={() => addTrackableProp(this.addDeleteObj, 'addedVal', {id: 40})}>Add prop</button>
+                    <button onClick={() => this.addDeleteObj.addedVal.id++}>Change added prop</button>
                 </div>
             </div>
         );
