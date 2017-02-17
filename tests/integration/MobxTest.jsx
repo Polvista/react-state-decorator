@@ -27,6 +27,8 @@ export default class MobxTest extends React.Component {
 
     @observable sameObjTrick;
 
+    @observable map = new Map();
+
     componentWillMount() {
         window.mobxTest = this;
 
@@ -127,6 +129,11 @@ export default class MobxTest extends React.Component {
                 <div>
                     Same obj trick: {this.sameObjTrick.selected.id}, {this.sameObjTrick.all[0].id}
                     <button onClick={() => setTimeout(() => this.sameObjTrick.selected.id++, 0)}>Change id</button>
+                </div>
+                <div>
+                    Map tests: {[...this.map.keys()].map(key => <span key={key}>{this.map.get(key)}</span>)}
+                    <button onClick={() => this.map.set(this.map.size, this.map.size)}>Add val</button>
+                    <button onClick={() => console.log(this.map)}>Log map</button>
                 </div>
             </div>
         );
