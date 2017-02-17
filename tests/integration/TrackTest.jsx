@@ -1,6 +1,24 @@
 import React, {Component} from 'react';
 import {track} from './../../src';
 
+const ObjComponent = ({obj}) => (
+    <div onClick={() => {
+        obj.id++;
+        obj.id++;
+    }}>{obj.id}</div>
+);
+
+class ObjCLassComponent extends Component {
+    render() {
+        return (
+            <div onClick={() => {
+                this.props.obj.id++;
+                this.props.obj.id++;
+            }}>{this.props.obj.id}</div>
+        );
+    }
+}
+
 export default class TrackTest extends Component {
 
     @track count = 0;
@@ -22,6 +40,14 @@ export default class TrackTest extends Component {
     @track withGetSet;
 
     @track array = [1, 2, 3];
+
+    @track objForChildFunctionalComponent = {
+        id: 200
+    };
+
+    @track objForChildClassComponent = {
+        id: 200
+    };
 
     componentDidMount() {
         window.trackTest = this;
@@ -91,6 +117,14 @@ export default class TrackTest extends Component {
                 <div>
                     With get/set: {this.withGetSet && this.withGetSet.val}
                     <button onClick={this.changeWithGetSet}>Change with get/set</button>
+                </div>
+                <div>
+                    Child functional component:
+                    <ObjComponent obj={this.objForChildFunctionalComponent} />
+                </div>
+                <div>
+                    Child class component:
+                    <ObjCLassComponent obj={this.objForChildClassComponent} />
                 </div>
             </div>
         );
