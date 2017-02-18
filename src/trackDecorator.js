@@ -10,6 +10,10 @@ export function track(target, propertyName, descriptor) {
 
         if(!tracker.isRerenderCallbackSetted()) {
             tracker.onChange(() => {
+                if(globalState.startedUntrackedActions > 0) {
+                    return;
+                }
+
                 if(globalState.startedActions > 0) {
                     //TODO refactor to trackers have ids logic
                     if(!tracker.isWaitingForActionsToEnd()) {

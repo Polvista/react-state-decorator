@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {track, action, addTrackableProp} from '../../src';
+import {track, action, addTrackableProp, untracked} from '../../src';
 
 class TestComponent {
 
@@ -207,5 +207,73 @@ describe('track decorator tests', () => {
         });
 
         
+    });
+
+    describe('with untracked', () => {
+        let component;
+
+        beforeEach(() => {
+            component = new TestComponent();
+        });
+
+        function testCase(name, action, realChangesCount = 0) {
+            describe(name, () => {
+                beforeEach(action);
+                it('should not generate extra changes', () => expect(component.changed).to.equal(realChangesCount));
+            });
+        }
+
+        testCase('simple call', () => {
+            untracked(() => {
+                component.strProp = 'new val';
+                component.list.push(123);
+            })();
+        });
+
+        testCase('with actions', () => {
+            untracked(() => {
+                component.strProp = 'new val';
+                action(() => {
+                    component.list.push(123);
+                    component.list.push(123);
+                })();
+            })();
+        });
+
+        testCase('nested', () => {
+            untracked(() => {
+                component.strProp = 'new val';
+                untracked(() => {
+                    component.list.push(123);
+                })();
+            })();
+        });
+
+        testCase('partial', () => {
+            component.id++;
+            untracked(() => {
+                component.id++;
+                untracked(() => {
+                    component.id++;
+                })();
+            })();
+            component.id++;
+            untracked(() => {
+                component.list.push(123);
+            })();
+        }, 2);
+
+        testCase('inside action', () => {
+            action(() => {
+                component.id++;
+                untracked(() => {
+                    component.id++;
+                    untracked(() => {
+                        component.id++;
+                    })();
+                })();
+                component.id++;
+            })();
+        }, 1);
     });
 });
