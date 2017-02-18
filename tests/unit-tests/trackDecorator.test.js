@@ -24,6 +24,13 @@ class TestComponent {
 
     @track uninit;
 
+    @track withUntrackedInside = {
+        id: 1,
+        obj: untracked({
+            id: 10
+        })
+    };
+
     @action changeSomething() {
         this.id++;
         this.id++;
@@ -275,5 +282,33 @@ describe('track decorator tests', () => {
                 component.id++;
             })();
         }, 1);
+    });
+
+    describe('with untracked object', () => {
+        let component;
+
+        beforeEach(() => {
+            component = new TestComponent();
+        });
+
+        function testCase(name, action, realChangesCount = 0) {
+            describe(name, () => {
+                beforeEach(action);
+                it('should not generate extra changes', () => expect(component.changed).to.equal(realChangesCount));
+            });
+        }
+
+        testCase('add untracked object', () => {
+            component.object = untracked({ id: 1 });
+            component.object.id++;
+            component.object.id++;
+        }, 1);
+
+        testCase('with untracked object', () => {
+            component.withUntrackedInside.id++;
+            component.withUntrackedInside.obj.id++;
+        }, 1);
+
+
     });
 });

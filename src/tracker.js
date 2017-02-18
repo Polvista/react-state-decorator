@@ -1,13 +1,14 @@
 import {getTrackableArray} from './types/trackableArray';
 import {getTrackableObject} from './types/trackableObject';
-import {addHiddenFinalProp, isPrimitive, isPlainObject, isUnique, isArray} from './utils';
+import {addHiddenFinalProp, isUntrackable, isPlainObject, isUnique, isArray} from './utils';
+import {markedUntrackable} from './core/untracked';
 
 const trackerProp = '__$tracker';
 
 export function getTracker(instance) {
     //runLazyInitializers(instance); // not sure about this
 
-    if(isPrimitive(instance))
+    if(isUntrackable(instance) || markedUntrackable(instance))
         return;
 
     if(instance[trackerProp])
@@ -62,7 +63,7 @@ class Tracker {
     }
 
     _makeTrackable(target) {
-        if(isPrimitive(target)) {
+        if(isUntrackable(target) || markedUntrackable(target)) {
             //TODO may be change to return target?
             return {
                 value: target

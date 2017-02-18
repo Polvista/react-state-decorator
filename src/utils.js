@@ -17,7 +17,7 @@ export function addHiddenFinalProp(object, propName, value) {
 }
 
 //TODO Boolean, Number, Dates, File, DomElements, etc
-export function isPrimitive(value) {
+export function isUntrackable(value) {
     const type = typeof value;
     return value == null || (type != "object" && type != "function");
 }

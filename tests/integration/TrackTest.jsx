@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {track, action, addTrackableProp} from './../../src';
+import {track, action, addTrackableProp, untracked} from './../../src';
 
 const ObjComponent = ({obj}) => (
     <div onClick={() => {
@@ -55,6 +55,13 @@ export default class TrackTest extends Component {
 
     @track addDeleteObj = {
         id: 15
+    };
+
+    @track withUntracked = {
+        id: 10,
+        obj: untracked({
+            val: '0'
+        })
     };
 
     componentDidMount() {
@@ -179,6 +186,14 @@ export default class TrackTest extends Component {
                     added: {this.addDeleteObj.addedVal && this.addDeleteObj.addedVal.id }
                     <button onClick={() => addTrackableProp(this.addDeleteObj, 'addedVal', {id: 40})}>Add prop</button>
                     <button onClick={() => this.addDeleteObj.addedVal.id++}>Change added prop</button>
+                </div>
+                <div>
+                    Change untracked obj prop: {this.withUntracked.obj.val}
+                    <button onClick={() => this.withUntracked.obj.val += '1'}>Change</button>
+                </div>
+                <div>
+                    Do untracked action: {this.task.id}
+                    <button onClick={untracked(() => this.task.id++)}>Change</button>
                 </div>
             </div>
         );
