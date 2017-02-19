@@ -234,7 +234,7 @@ describe('track decorator tests', () => {
             untracked(() => {
                 component.strProp = 'new val';
                 component.list.push(123);
-            })();
+            });
         });
 
         testCase('with actions', () => {
@@ -244,7 +244,7 @@ describe('track decorator tests', () => {
                     component.list.push(123);
                     component.list.push(123);
                 })();
-            })();
+            });
         });
 
         testCase('nested', () => {
@@ -252,22 +252,18 @@ describe('track decorator tests', () => {
                 component.strProp = 'new val';
                 untracked(() => {
                     component.list.push(123);
-                })();
-            })();
+                });
+            });
         });
 
         testCase('partial', () => {
             component.id++;
             untracked(() => {
                 component.id++;
-                untracked(() => {
-                    component.id++;
-                })();
-            })();
+                untracked(() => component.id++);
+            });
             component.id++;
-            untracked(() => {
-                component.list.push(123);
-            })();
+            untracked(() => component.list.push(123));
         }, 2);
 
         testCase('inside action', () => {
@@ -277,8 +273,8 @@ describe('track decorator tests', () => {
                     component.id++;
                     untracked(() => {
                         component.id++;
-                    })();
-                })();
+                    });
+                });
                 component.id++;
             })();
         }, 1);

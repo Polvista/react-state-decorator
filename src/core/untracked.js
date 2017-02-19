@@ -10,13 +10,11 @@ export function markedUntrackable(target) {
 export function untracked(arg) {
     // TODO Maps, Promises, etc checks
     if(typeof arg === 'function') {
-        return function() {
-            globalState.startedUntrackedActions++;
-            try {
-                return arg.apply(this, arguments);
-            } finally {
-                globalState.startedUntrackedActions--;
-            }
+        globalState.startedUntrackedActions++;
+        try {
+            return arg.apply(this, arguments);
+        } finally {
+            globalState.startedUntrackedActions--;
         }
     } else if(!isUntrackable(arg)) {
         // better just mark object than store a reference. GC should work

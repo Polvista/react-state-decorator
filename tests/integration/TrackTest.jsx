@@ -193,7 +193,7 @@ export default class TrackTest extends Component {
                 </div>
                 <div>
                     Do untracked action: {this.task.id}
-                    <button onClick={untracked(() => this.task.id++)}>Change</button>
+                    <button onClick={() => untracked(() => this.task.id++)}>Change</button>
                 </div>
             </div>
         );
