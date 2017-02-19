@@ -103,10 +103,10 @@ export class TrackTest extends React.Component<{}, {}> {
     @action changeWithNestedDecoratedAction() {
         this.objForActionTest.id++;
         this.objForActionTest.id++;
-        action(() => {
+        action((prop: string) => {
             this.objForActionTest.id++;
             this.objForActionTest.id++;
-        })()
+        })(10, 50);
     }
 
     @action changeWithDecoratedActionAndException() {
