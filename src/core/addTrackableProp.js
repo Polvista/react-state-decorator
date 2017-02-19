@@ -1,5 +1,6 @@
 import {getTracker} from '../tracker';
 
+// TODO extend
 export function addTrackableProp(target, prop, value) {
     const tracker = getTracker(target);
 

@@ -8,6 +8,7 @@ export function markedUntrackable(target) {
 }
 
 export function untracked(arg) {
+    // TODO Maps, Promises, etc checks
     if(typeof arg === 'function') {
         return function() {
             globalState.startedUntrackedActions++;

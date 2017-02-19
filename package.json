@@ -30,6 +30,8 @@
   },
   "homepage": "https://github.com/Polvista/react-track-state#readme",
   "devDependencies": {
+    "@types/react": "^15.0.11",
+    "@types/react-dom": "^0.14.23",
     "babel-core": "^6.22.1",
     "babel-loader": "^6.2.10",
     "babel-plugin-react-transform": "^2.0.2",
