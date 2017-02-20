@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+		"outDir": "./public/js",
+		"sourceMap": true,
+		"module": "commonjs",
+		"removeComments": true,
+		"experimentalDecorators": true,
+		"target": "ES6",
+		"jsx": "react"
+	},
+	"include": [
+		"./**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"vendor"
+	]
+}

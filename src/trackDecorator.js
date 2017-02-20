@@ -54,6 +54,6 @@ export function track(target, propertyName, descriptor) {
         descriptor,
         initialize,
         get,
-        set,
+        set
     );
 }

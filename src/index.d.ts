@@ -5,7 +5,7 @@ export function action<T extends Function>(fn: T): T;
 export {addTrackableProp};
 export {deleteTrackableProp};
 export function untracked<T>(action: () => T): T;
-export function untracked(object: any): void;
+export function untracked<T extends Object>(object: T): T;
 
 
 declare function addTrackableProp(target: any, propertyName: string, value: any): void;

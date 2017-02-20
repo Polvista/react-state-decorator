@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --hot --inline",
+    "dev-ts": "webpack-dev-server --hot --inline --config webpack.ts.config.js",
     "test": "mocha tests/unit-tests --compilers js:babel-core/register"
   },
   "repository": {
@@ -47,6 +48,8 @@
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-transform-hmr": "^1.0.4",
+    "ts-loader": "^2.0.0",
+    "typescript": "^2.1.6",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0"
   }
