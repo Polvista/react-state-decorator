@@ -1,4 +1,5 @@
 import {getTracker} from '../tracker';
+import {defineProp} from '../utils';
 
 export const outOfBoundariesTrackRange = 1;
 const ignoreChangesProp = '__$trackIgnoreChanges';
@@ -6,7 +7,7 @@ const mutatingMethods = ['shift', 'push', 'pop', 'unshift', 'reverse', 'sort', '
 
 const trackableArrayPrototype = Object.create(Array.prototype);
 mutatingMethods.forEach(defineTrackableArrayMethod);
-Object.defineProperty(trackableArrayPrototype, 'toJSON', {
+defineProp(trackableArrayPrototype, 'toJSON', {
     configurable: true,
     enumerable: false,
     value() {
@@ -27,7 +28,7 @@ export function getTrackableArray(origArray) {
     tracker.initValue('length', origArray.length);
 
     defineTrackableProp(trackableArray, origArray.length, tracker, true);
-    Object.defineProperty(trackableArray, 'length', {
+    defineProp(trackableArray, 'length', {
         configurable: true,
         enumerable: false,
         get() {
@@ -79,7 +80,7 @@ export function getTrackableArray(origArray) {
 }
 
 function defineTrackableProp(target, prop, tracker, isOutOfBoundaries) {
-    Object.defineProperty(target, prop, {
+    defineProp(target, prop, {
         configurable: true,
         enumerable: !isOutOfBoundaries,
         get() {
@@ -102,11 +103,11 @@ function defineTrackableProp(target, prop, tracker, isOutOfBoundaries) {
 }
 
 function defineTrackableArrayMethod(name) {
-    Object.defineProperty(trackableArrayPrototype, name, {
+    defineProp(trackableArrayPrototype, name, {
         configurable: true,
         enumerable: false,
         value() {
-            Object.defineProperty(this, ignoreChangesProp, {
+            defineProp(this, ignoreChangesProp, {
                 configurable: true,
                 enumerable: false,
                 value: true

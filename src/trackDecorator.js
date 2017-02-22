@@ -1,6 +1,7 @@
 import classPropertyDecorator from './classPropertyDecorator';
 import {getTracker} from './tracker';
 import {globalState} from './globalState';
+import {defineProp} from './utils';
 
 export function track(target, propertyName, descriptor) {
 
@@ -32,7 +33,7 @@ export function track(target, propertyName, descriptor) {
             }, true);
         }
 
-        Object.defineProperty(instance, propertyName, {
+        defineProp(instance, propertyName, {
             configurable: true,
             enumerable: true,
             get,

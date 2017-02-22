@@ -1,5 +1,9 @@
+export function defineProp(object, propName, descriptor) {
+    Object.defineProperty(object, propName, descriptor);
+}
+
 export function addHiddenProp(object, propName, value) {
-    Object.defineProperty(object, propName, {
+    defineProp(object, propName, {
         enumerable: false,
         writable: true,
         configurable: true,
@@ -8,7 +12,7 @@ export function addHiddenProp(object, propName, value) {
 }
 
 export function addHiddenFinalProp(object, propName, value) {
-    Object.defineProperty(object, propName, {
+    defineProp(object, propName, {
         enumerable: false,
         writable: false,
         configurable: false,

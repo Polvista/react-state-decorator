@@ -10,7 +10,7 @@
     "dev": "webpack-dev-server --hot --inline",
     "dev-ts": "webpack-dev-server --hot --inline --config webpack.ts.config.js",
     "test": "mocha tests/unit-tests --compilers js:babel-core/register",
-    "build": "rollup -c && uglifyjs --screw-ie8 -c -m --mangle-props -o build/index.min.js build/index.js"
+    "build": "rollup -c && uglifyjs --screw-ie8 -c -m sort,toplevel -o build/index.min.js build/index.js"
   },
   "repository": {
     "type": "git",

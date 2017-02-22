@@ -1,4 +1,5 @@
 import {getTracker} from '../tracker';
+import {defineProp} from '../utils';
 
 export function getTrackableObject(target) {
     const tracker = getTracker(target);
@@ -12,7 +13,7 @@ export function getTrackableObject(target) {
         tracker.initValue(propName, target[propName]);
 
         //TODO existing get/set ?
-        Object.defineProperty(target, propName, {
+        defineProp(target, propName, {
             enumerable: descriptor.enumerable,
             configurable: true,
             get() {

@@ -1,4 +1,5 @@
 import {getTracker} from '../tracker';
+import {defineProp} from '../utils';
 
 export function extend(target, obj) {
     const tracker = getTracker(target);
@@ -9,7 +10,7 @@ export function extend(target, obj) {
 
     Object.getOwnPropertyNames(obj).forEach(prop => {
         tracker.initValue(prop, obj[prop]);
-        Object.defineProperty(target, prop, {
+        defineProp(target, prop, {
             enumerable: true,
             configurable: true,
             get() {
