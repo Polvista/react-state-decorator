@@ -24,6 +24,143 @@ export function isTracking(target) {
     return target[trackerProp] != null;
 }
 
+/**
+ * Refactored to not use ES6 class, to reduce bundle size
+ * */
+function Tracker(target) {
+    this.values = {};
+    this.callbacks = [];
+    this.subscriptions = {};
+    this.target = target;
+    this.waitingForActionsToEnd = false;
+    this.rerenderCallbackSetted = false;
+}
+
+Tracker.prototype._setValue = function(prop, value, shouldReport = true) {
+    const currValue = this.getValue(prop);
+    const isSame = currValue === value;
+
+    if(!isSame) {
+        const {
+            tracker: valueTracker,
+            value: newValue
+        } = this._makeTrackable(value);
+
+        if(newValue)
+            value = newValue;
+
+        this.stopListen(prop);
+
+        if(valueTracker)
+            this.subscriptions[prop] = valueTracker.onChange(() => this.reportChange(prop));
+    }
+
+    this.values[prop] = value;
+
+    if(shouldReport && !isSame)
+        this.reportChange();
+};
+
+Tracker.prototype._makeTrackable = function(target) {
+    if(isUntrackable(target) || markedUntrackable(target)) {
+        //TODO may be change to return target?
+        return {
+            value: target
+        };
+    }
+
+    if(isTracking(target)) {
+        return {
+            tracker: getTracker(target),
+            value: target
+        };
+    }
+
+    if(isPlainObject(target)) {
+        const trackableObject = getTrackableObject(target);
+        return {
+            tracker: getTracker(trackableObject),
+            value: trackableObject
+        };
+    }
+
+    if(isArray(target)) {
+        const trackableArray = getTrackableArray(target);
+        return {
+            tracker: getTracker(trackableArray),
+            value: trackableArray
+        };
+    }
+
+    return {
+        value: target
+    };
+};
+
+Tracker.prototype.setValue = function(prop, value) {
+    this._setValue(prop, value);
+};
+
+Tracker.prototype.setValueSilently = function(prop, value) {
+    this._setValue(prop, value, false);
+};
+
+Tracker.prototype.initValue = function(prop, value) {
+    this._setValue(prop, value, false);
+};
+
+Tracker.prototype.deleteValue = function(prop) {
+    this.stopListen(prop);
+    delete this.values[prop];
+};
+
+Tracker.prototype.stopListen = function(prop) {
+    this.subscriptions[prop] && this.subscriptions[prop]();
+    delete this.subscriptions[prop];
+};
+
+Tracker.prototype.getValue = function(prop) {
+    return this.values[prop];
+};
+
+Tracker.prototype.onChange = function(callback, isRerenderCallback) {
+    this.callbacks.push(callback);
+
+    if(isRerenderCallback)
+        this.rerenderCallbackSetted = true;
+
+    return () => {
+        const index = this.callbacks.indexOf(callback);
+        if(index > -1) {
+            this.callbacks.splice(index, 1);
+        }
+    };
+};
+
+Tracker.prototype.isRerenderCallbackSetted = function() {
+    return this.rerenderCallbackSetted;
+};
+
+Tracker.prototype.isWaitingForActionsToEnd = function() {
+    return this.waitingForActionsToEnd;
+};
+
+Tracker.prototype.setWaitingForActionsToEnd = function(value) {
+    this.waitingForActionsToEnd = value;
+};
+
+Tracker.prototype.reportChange = function(changedProp) {
+    // TODO change report algorithm so changes on objects located multiple times inside target would result in one change event
+    if(changedProp && Object.getOwnPropertyDescriptor(this.target, changedProp) == null) {
+        // property was deleted
+        this.stopListen(changedProp);
+        return;
+    }
+
+    this.callbacks.forEach(callback => callback());
+};
+/*
+
 class Tracker {
 
     constructor(target) {
@@ -163,4 +300,4 @@ class Tracker {
         this.callbacks.forEach(callback => callback());
     }
 
-}
+}*/
