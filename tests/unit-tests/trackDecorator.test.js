@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {track, action, addTrackableProp, untracked} from '../../src';
+import {track, action, extend, untracked} from '../../src';
 
 class TestComponent {
 
@@ -36,7 +36,7 @@ class TestComponent {
         this.id++;
         this.strProp = 'new val';
         this.list.push({id: 5});
-        addTrackableProp(this.object, 'newProp', {val: 10});
+        extend(this.object, {newProp: {val: 10}});
         this.object.newProp.val++;
     }
 
@@ -44,7 +44,7 @@ class TestComponent {
         this.id++;
         action(() => {
             this.id++;
-            addTrackableProp(this.object, 'newProp', {val: 10});
+            extend(this.object, {newProp: {val: 10}});
             this.object.newProp.val++;
             action(() => {
                 this.strProp = 'new val';
@@ -158,7 +158,7 @@ describe('track decorator tests', () => {
                 component.list.push(11);
                 component.object.deep.deepArr[0].deepValue = 'new val';
                 component.object.deep.deepArr.push('new val');
-                addTrackableProp(component.object, 'newProp', {val: 10});
+                extend(component.object, {newProp: {val: 10}});
                 component.object.newProp.val++;
             });
 
@@ -169,7 +169,7 @@ describe('track decorator tests', () => {
                     action(() => {
                         component.object.deep.deepArr[0].deepValue = 'new val';
                         component.object.deep.deepArr.push('new val');
-                        addTrackableProp(component.object, 'newProp', {val: 10});
+                        extend(component.object, {newProp: {val: 10}});
                         component.object.newProp.val++;
                     })();
                 })();

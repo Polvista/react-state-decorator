@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 import {getTracker, isTracking} from '../../src/tracker';
-import {addTrackableProp} from '../../src';
+import {extend} from '../../src';
 
-describe('addTrackableProp tests', () => {
+describe('extend tests', () => {
     let trackedObject;
     let notTrackedObject;
     let trackedChanges;
@@ -23,8 +23,11 @@ describe('addTrackableProp tests', () => {
             value: 10
         };
 
-        addTrackableProp(trackedObject, 'newProp', { someData: 20 });
-        addTrackableProp(notTrackedObject, 'newProp', { someData: 20 });
+        extend(trackedObject, {
+            newProp: {someData: 20},
+            newProp2: {someData: 20}
+        });
+        extend(notTrackedObject, {newProp: { someData: 20 }});
 
         notTrackedChanges = 0;
         if(isTracking(notTrackedObject))
@@ -33,6 +36,11 @@ describe('addTrackableProp tests', () => {
         if(trackedObject.newProp)
             trackedObject.newProp.someData++;
 
+        if(trackedObject.newProp2) {
+            trackedObject.newProp2.someData++;
+            trackedObject.newProp2.someData++;
+        }
+
         if(notTrackedObject.newProp)
             notTrackedObject.newProp.someData++;
     });
@@ -40,7 +48,8 @@ describe('addTrackableProp tests', () => {
     it('should track object 1', () => expect(isTracking(trackedObject)).to.be.true);
     it('should track object 2', () => expect(isTracking(notTrackedObject)).to.be.true);
     it('should add prop', () => expect(trackedObject.newProp).to.be.eql( { someData: 21 } ));
-    it('should generate change', () => expect(trackedChanges).to.eql(2));
+    it('should add prop2', () => expect(trackedObject.newProp2).to.be.eql( { someData: 22 } ));
+    it('should generate change', () => expect(trackedChanges).to.eql(4));
     it('should track changes on value', () => expect(notTrackedChanges).to.eql(1));
 
 });

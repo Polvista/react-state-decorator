@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {track, action, addTrackableProp, untracked} from './../../src';
+import {track, action, extend, untracked} from './../../src';
 
 const ObjComponent = ({obj}) => (
     <div onClick={() => {
@@ -184,7 +184,7 @@ export default class TrackTest extends Component {
                 <div>
                     Add/delete prop test:
                     added: {this.addDeleteObj.addedVal && this.addDeleteObj.addedVal.id }
-                    <button onClick={() => addTrackableProp(this.addDeleteObj, 'addedVal', {id: 40})}>Add prop</button>
+                    <button onClick={() => extend(this.addDeleteObj, {addedVal: {id: 40}})}>Add prop</button>
                     <button onClick={() => this.addDeleteObj.addedVal.id++}>Change added prop</button>
                 </div>
                 <div>
