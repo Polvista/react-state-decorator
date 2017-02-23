@@ -31,6 +31,12 @@ class TestComponent {
         })
     };
 
+    @track.watchRef refObject = {
+        id: 99
+    };
+
+    @track.watchShallow shallowArray = [{id: 99}, {id: 100}, {id: 101}];
+
     @action changeSomething() {
         this.id++;
         this.id++;
@@ -307,4 +313,78 @@ describe('track decorator tests', () => {
 
 
     });
+
+    describe('watchRef tests', () => {
+        let component;
+        beforeEach(() => {
+            component = new TestComponent();
+        });
+
+        function testCase(name, action, changesCount) {
+            describe(name, () => {
+                beforeEach(action);
+
+                it('should change correct number of times', () => expect(component.changed).to.equal(changesCount));
+            });
+        }
+
+        testCase('ref change', () => {
+            component.refObject = { val: 'new' };
+            component.refObject = {};
+        }, 2);
+
+        testCase('ignore non-ref change', () => {
+            component.refObject.id++;
+            component.refObject = { val: 'new' };
+            component.refObject.val = {};
+
+            component.refObject = [];
+            component.refObject.push(10);
+        }, 2);
+
+    });
+
+    describe('watchShallow tests', () => {
+        let component;
+        beforeEach(() => {
+            component = new TestComponent();
+        });
+
+        function testCase(name, action, changesCount) {
+            describe(name, () => {
+                beforeEach(action);
+
+                it('should change correct number of times', () => expect(component.changed).to.equal(changesCount));
+            });
+        }
+
+        testCase('shallow changes', () => {
+            component.shallowArray.push({});
+            component.shallowArray = [];
+        }, 2);
+
+        testCase('ignore non-shallow change', () => {
+            component.shallowArray[0].id++;
+            component.shallowArray[1].id++;
+            component.shallowArray.unshift({ id: 20 });
+            component.shallowArray[0].id++;
+            component.shallowArray = [];
+            component.shallowArray.push(10);
+        }, 3);
+
+        describe('not collection assign', () => {
+            let exception;
+            beforeEach(() => {
+                try {
+                    component.shallowArray = {};
+                } catch (e) {
+                    exception = e;
+                }
+            });
+
+            it('should throw exception', () => expect(exception).to.not.be.undefined);
+        });
+
+    });
+
 });

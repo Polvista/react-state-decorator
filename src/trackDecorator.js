@@ -3,58 +3,66 @@ import {getTracker} from './tracker';
 import {globalState} from './globalState';
 import {defineProp} from './utils';
 
-export function track(target, propertyName, descriptor) {
+function createTrackDecorator(scope) {
+    return function(target, propertyName, descriptor) {
 
-    function initialize(instance, initialValue) {
-        const tracker = getTracker(instance);
-        tracker.initValue(propertyName, initialValue);
+        function initialize(instance, initialValue) {
+            const tracker = getTracker(instance);
+            tracker.initValue(propertyName, initialValue);
 
-        if(!tracker.isRerenderCallbackSetted()) {
-            tracker.onChange(() => {
-                if(globalState.startedUntrackedActions > 0) {
-                    return;
-                }
-
-                if(globalState.startedActions > 0) {
-                    //TODO refactor to trackers have ids logic
-                    if(!tracker.isWaitingForActionsToEnd()) {
-                        tracker.setWaitingForActionsToEnd(true);
-                        globalState.afterActionsEndedCallbacks.push(() => {
-                            tracker.setWaitingForActionsToEnd(false);
-                            instance.forceUpdate();
-                        });
+            if(!tracker.isRerenderCallbackSetted()) {
+                tracker.onChange(() => {
+                    if(globalState.startedUntrackedActions > 0) {
+                        return;
                     }
 
-                    return;
-                }
+                    if(globalState.startedActions > 0) {
+                        //TODO refactor to trackers have ids logic
+                        if(!tracker.isWaitingForActionsToEnd()) {
+                            tracker.setWaitingForActionsToEnd(true);
+                            globalState.afterActionsEndedCallbacks.push(() => {
+                                tracker.setWaitingForActionsToEnd(false);
+                                instance.forceUpdate();
+                            });
+                        }
 
-                // TODO track mount state
-                instance.forceUpdate();
-            }, true);
+                        return;
+                    }
+
+                    // TODO track mount state
+                    instance.forceUpdate();
+                }, true);
+            }
+
+            defineProp(instance, propertyName, {
+                configurable: true,
+                enumerable: true,
+                get,
+                set
+            });
         }
 
-        defineProp(instance, propertyName, {
-            configurable: true,
-            enumerable: true,
+        function get() {
+            return getTracker(this).getValue(propertyName);
+        }
+
+        function set(val) {
+            getTracker(this).setValue(propertyName, val);
+        }
+
+        return classPropertyDecorator(
+            target,
+            propertyName,
+            descriptor,
+            initialize,
             get,
             set
-        });
+        );
     }
-
-    function get() {
-        return getTracker(this).getValue(propertyName);
-    }
-
-    function set(val) {
-        getTracker(this).setValue(propertyName, val);
-    }
-
-    return classPropertyDecorator(
-        target,
-        propertyName,
-        descriptor,
-        initialize,
-        get,
-        set
-    );
 }
+
+const trackDecorator = createTrackDecorator();
+trackDecorator.watchRef = createTrackDecorator('ref');
+trackDecorator.watchShallow = createTrackDecorator('shallow');
+
+export const track = trackDecorator;
