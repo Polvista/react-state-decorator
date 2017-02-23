@@ -39,6 +39,6 @@ gulp.task('build', ['rollup'], () => {
 
 
 gulp.task('copy', () => {
-    gulp.src(['package.json', 'LICENSE', 'README.md'])
+    gulp.src(['src/index.d.ts', 'package.json', 'LICENSE', 'README.md'])
         .pipe(gulp.dest('build'));
 });
