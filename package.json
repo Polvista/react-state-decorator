@@ -2,7 +2,7 @@
   "name": "react-track-state",
   "version": "0.0.1",
   "description": "",
-  "main": "src/index.js",
+  "main": "index.js",
   "directories": {
     "test": "tests"
   },
@@ -10,7 +10,7 @@
     "dev": "webpack-dev-server --hot --inline",
     "dev-ts": "webpack-dev-server --hot --inline --config webpack.ts.config.js",
     "test": "mocha tests/unit-tests --compilers js:babel-core/register",
-    "build": "rollup -c && uglifyjs --screw-ie8 -c -m sort,toplevel -o build/index.min.js build/index.js"
+    "build": "gulp"
   },
   "repository": {
     "type": "git",
@@ -43,6 +43,8 @@
     "babel-preset-react": "^6.22.0",
     "babel-preset-stage-1": "^6.22.0",
     "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-rollup": "^2.11.0",
     "html-webpack-plugin": "^2.28.0",
     "mobx": "^3.1.0",
     "mobx-react": "^4.1.0",

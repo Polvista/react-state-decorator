@@ -39,12 +39,12 @@ export default function classPropertyDecorator(target, propertyName, descriptor,
         return {
             enumerable: true,
             configurable: true,
-            get: function() {
+            get() {
                 if (!this[typescriptInitializedProps] || this[typescriptInitializedProps][propertyName] !== true)
                     initializeTypescriptProperty(this, propertyName, undefined, initialize);
                 return get.call(this);
             },
-            set: function(v) {
+            set(v) {
                 if (!this[typescriptInitializedProps] || this[typescriptInitializedProps][propertyName] !== true) {
                     initializeTypescriptProperty(this, propertyName, v, initialize);
                 } else {

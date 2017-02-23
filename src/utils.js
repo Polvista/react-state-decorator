@@ -1,6 +1,7 @@
-export function defineProp(object, propName, descriptor) {
-    Object.defineProperty(object, propName, descriptor);
-}
+/**
+ * Put some global functions in variables, so it could be minified efficiently
+ * */
+export const defineProp = Object.defineProperty;
 
 export function addHiddenProp(object, propName, value) {
     defineProp(object, propName, {
