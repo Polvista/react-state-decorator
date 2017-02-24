@@ -1,5 +1,5 @@
 import {globalState} from '../globalState';
-import {isUntrackable, addHiddenProp} from '../utils';
+import {isUntrackable, addHiddenProp, isCollection, isGlobalObject} from '../utils';
 
 const untrackableProp = '__$untrackable';
 
@@ -8,8 +8,8 @@ export function markedUntrackable(target) {
 }
 
 export function untracked(arg) {
-    // TODO Maps, Promises, etc checks
-    if(typeof arg === 'function') {
+    // TODO how to check that it is not user class instance?...
+    if(typeof arg === 'function' && !isGlobalObject(arg) && !isCollection(arg)) {
         globalState.startedUntrackedActions++;
         try {
             return arg.apply(this, arguments);

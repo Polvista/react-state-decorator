@@ -1,14 +1,12 @@
 import {getTrackableArray} from './types/trackableArray';
 import {getTrackableObject} from './types/trackableObject';
-import {addHiddenFinalProp, isUntrackable, isPlainObject, isUnique, isArray} from './utils';
+import {addHiddenFinalProp, isUntrackable, isPlainObject, isCollection, isArray} from './utils';
 import {markedUntrackable} from './core/untracked';
 
 const trackerProp = '__$tracker';
 
 export function getTracker(instance) {
-    //runLazyInitializers(instance); // not sure about this
-
-    if(isUntrackable(instance) || markedUntrackable(instance))
+    if(isUntrackable(instance) || markedUntrackable(instance) || isCollection(instance))
         return;
 
     if(instance[trackerProp])
@@ -72,6 +70,13 @@ Tracker.prototype._setValue = function(prop, value, shouldReport = true) {
 Tracker.prototype._makeTrackable = function(target) {
     if(isUntrackable(target) || markedUntrackable(target)) {
         //TODO may be change to return target?
+        return {
+            value: target
+        };
+    }
+
+    if(isCollection(target)) {
+        console.warn('Map/Set/WeakMap/WeakSet are not currently supported for state tracking');
         return {
             value: target
         };

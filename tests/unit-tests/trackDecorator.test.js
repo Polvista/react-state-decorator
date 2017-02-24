@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import {track, action, extend, untracked} from '../../src';
+import {isTracking} from '../../src/tracker';
 
 class TestComponent {
 
@@ -36,6 +37,13 @@ class TestComponent {
     };
 
     @track.watchShallow shallowArray = [{id: 99}, {id: 100}, {id: 101}];
+
+    @track objWithGlobals = {
+        normal: {},
+        map: new Map(),
+        bool: new Boolean(false),
+        num: new Number(20)
+    };
 
     @action changeSomething() {
         this.id++;
@@ -91,6 +99,14 @@ describe('track decorator tests', () => {
             expect(component).to.have.ownProperty('object');
             expect(component).to.have.ownProperty('list');
             expect(component).to.have.ownProperty('uninit');
+            expect(component).to.have.ownProperty('objWithGlobals');
+        });
+
+        it('should not track global objects', () => {
+            expect(isTracking(component.objWithGlobals.normal)).to.be.true;
+            expect(isTracking(component.objWithGlobals.map)).to.be.false;
+            expect(isTracking(component.objWithGlobals.bool)).to.be.false;
+            expect(isTracking(component.objWithGlobals.num)).to.be.false;
         });
 
         function testCase(name, action, getter, realChangesCount = 1) {
