@@ -59,13 +59,6 @@ export function isCollection(value) {
     return existingCollections.some(collection => value instanceof topObject[collection]);
 }
 
-export function isPlainObject(target) {
-    if (target === null || typeof target !== "object")
-        return false;
-    const proto = Object.getPrototypeOf(target);
-    return proto === Object.prototype || proto === null;
-}
-
 export function isArray(target) {
     return Array.isArray(target);
 }

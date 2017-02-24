@@ -1,6 +1,22 @@
 import React, {Component} from 'react';
 import {track, action, extend, untracked} from './../../src';
 
+class BaseClass {
+    constructor() {
+        this.baseProp = 1;
+        this.baseProp2 = { id: 10 };
+    }
+}
+
+class ChildClass extends BaseClass {
+    constructor() {
+        super();
+        this.childProp = 10;
+        this.childProp2 = { id: 10 };
+        this.childProp3 = new BaseClass();
+    }
+}
+
 const ObjComponent = ({obj}) => (
     <div onClick={() => {
         obj.id++;
@@ -69,6 +85,8 @@ export default class TrackTest extends Component {
     };
 
     @track.watchShallow shallowArray = [{id: 99}, {id: 100}, {id: 101}];
+
+
 
     componentDidMount() {
         window.trackTest = this;

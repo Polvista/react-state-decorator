@@ -1,6 +1,6 @@
 import {getTrackableArray} from './types/trackableArray';
 import {getTrackableObject} from './types/trackableObject';
-import {addHiddenFinalProp, isUntrackable, isPlainObject, isCollection, isArray} from './utils';
+import {addHiddenFinalProp, isUntrackable, isCollection, isArray} from './utils';
 import {markedUntrackable} from './core/untracked';
 
 const trackerProp = '__$tracker';
@@ -75,13 +75,6 @@ Tracker.prototype._makeTrackable = function(target) {
         };
     }
 
-    if(isCollection(target)) {
-        console.warn('Map/Set/WeakMap/WeakSet are not currently supported for state tracking');
-        return {
-            value: target
-        };
-    }
-
     if(isTracking(target)) {
         return {
             tracker: getTracker(target),
@@ -89,11 +82,10 @@ Tracker.prototype._makeTrackable = function(target) {
         };
     }
 
-    if(isPlainObject(target)) {
-        const trackableObject = getTrackableObject(target);
+    if(isCollection(target)) {
+        console.warn('Map/Set/WeakMap/WeakSet are not currently supported for state tracking');
         return {
-            tracker: getTracker(trackableObject),
-            value: trackableObject
+            value: target
         };
     }
 
@@ -105,8 +97,11 @@ Tracker.prototype._makeTrackable = function(target) {
         };
     }
 
+    // it is plain object or class instance
+    const trackableObject = getTrackableObject(target);
     return {
-        value: target
+        tracker: getTracker(trackableObject),
+        value: trackableObject
     };
 };
 

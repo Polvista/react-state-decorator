@@ -1,6 +1,23 @@
 import {expect} from 'chai';
+import {extend} from '../../src';
 import {getTrackableObject} from '../../src/types/trackableObject';
 import {getTracker, isTracking} from '../../src/tracker';
+
+class BaseClass {
+    constructor() {
+        this.baseProp = 1;
+        this.baseProp2 = { id: 10 };
+    }
+}
+
+class ChildClass extends BaseClass {
+    constructor() {
+        super();
+        this.childProp = 10;
+        this.childProp2 = { id: 10 };
+        this.childProp3 = new BaseClass();
+    }
+}
 
 function checkForInProps(trackable, obj) {
     const trackableProps = [];
@@ -182,6 +199,86 @@ describe('trackableObject tests', () => {
             nested.id++;
         }, 0);
 
+    });
+
+    describe('class instances', () => {
+        let object;
+        let changes;
+
+        function testCase(name, init, action, checks) {
+            describe(name, () => {
+                beforeEach(() => {
+                    changes = 0;
+                    init();
+                    getTrackableObject(object);
+                    getTracker(object).onChange(() => changes++);
+                    action();
+                });
+
+                checks();
+            });
+        }
+
+        testCase(
+            'track class instance',
+            () => object = new BaseClass(),
+            () => {
+                object.baseProp = 40;
+                object.baseProp2.id++;
+            },
+            () => {
+                it('should track only props', () => {
+                    const trackedProps = Object.getOwnPropertyNames(getTracker(object).values);
+                    expect(trackedProps).to.deep.equal(['baseProp', 'baseProp2']);
+                });
+
+                it('should change right amount of times', () => expect(changes).to.equal(2));
+            }
+        );
+
+        testCase(
+            'inheritance',
+            () => object = new ChildClass(),
+            () => {
+                object.baseProp++;
+                object.baseProp2.id++;
+                object.childProp++;
+                object.childProp2.id++;
+                object.childProp3.baseProp = 99;
+            },
+            () => {
+                it('should track only props', () => {
+                    const trackedProps = Object.getOwnPropertyNames(getTracker(object).values);
+                    expect(trackedProps).to.deep.equal(['baseProp', 'baseProp2', 'childProp', 'childProp2', 'childProp3']);
+                });
+
+                it('should change right amount of times', () => expect(changes).to.equal(5));
+            }
+        );
+
+        testCase(
+            'extend test',
+            () => object = new BaseClass(),
+            () => {
+                extend(object, {
+                    newProp: {
+                        id: 10
+                    }
+                });
+
+                object.newProp.id++;
+                object.newProp = new BaseClass();
+                object.newProp.baseProp2.id++;
+            },
+            () => {
+                it('should track only props', () => {
+                    const trackedProps = Object.getOwnPropertyNames(getTracker(object).values);
+                    expect(trackedProps).to.deep.equal(['baseProp', 'baseProp2', 'newProp']);
+                });
+
+                it('should change right amount of times', () => expect(changes).to.equal(4));
+            }
+        );
     });
 
 });

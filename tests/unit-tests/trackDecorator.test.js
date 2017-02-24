@@ -2,6 +2,22 @@ import {expect} from 'chai';
 import {track, action, extend, untracked} from '../../src';
 import {isTracking} from '../../src/tracker';
 
+class BaseClass {
+    constructor() {
+        this.baseProp = 1;
+        this.baseProp2 = { id: 10 };
+    }
+}
+
+class ChildClass extends BaseClass {
+    constructor() {
+        super();
+        this.childProp = 10;
+        this.childProp2 = { id: 10 };
+        this.childProp3 = new BaseClass();
+    }
+}
+
 class TestComponent {
 
     changed = 0;
@@ -44,6 +60,8 @@ class TestComponent {
         bool: new Boolean(false),
         num: new Number(20)
     };
+
+    @track classObject = new ChildClass();
 
     @action changeSomething() {
         this.id++;
@@ -409,6 +427,31 @@ describe('track decorator tests', () => {
             it('should throw exception', () => expect(exception).to.not.be.undefined);
         });
 
+    });
+
+    describe('with classes', () => {
+        let component;
+
+        function testCase(name, action, changes) {
+            describe(name, () => {
+                beforeEach(() => {
+                    component = new TestComponent();
+                    action();
+                });
+
+                it('should change right amount of times', () => expect(component.changed).to.equal(changes));
+            });
+        }
+
+        testCase('class changes', () => {
+            component.classObject.childProp++;
+            component.classObject.childProp2.id++;
+            component.classObject.childProp3 = new BaseClass();
+            component.classObject.childProp3.baseProp2.id++;
+            component.classObject.baseProp2.id++;
+            component.classObject = new BaseClass();
+            component.classObject.baseProp++;
+        }, 7);
     });
 
 });
