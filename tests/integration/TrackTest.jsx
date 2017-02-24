@@ -86,7 +86,7 @@ export default class TrackTest extends Component {
 
     @track.watchShallow shallowArray = [{id: 99}, {id: 100}, {id: 101}];
 
-
+    @track classObj = new ChildClass();
 
     componentDidMount() {
         window.trackTest = this;
@@ -230,6 +230,14 @@ export default class TrackTest extends Component {
                     <button onClick={() => this.shallowArray.push({id: 1})}>Push obj</button>
                     <button onClick={() => this.shallowArray = [{id: 111}]}>Change arr</button>
                     <button onClick={() => this.shallowArray = {}}>Change to not arr</button>
+                </div>
+                <div>
+                    Class tests: {JSON.stringify(this.classObj)}
+                    <button onClick={() => this.classObj.childProp++}>Change childProp</button>
+                    <button onClick={() => this.classObj.childProp2.id++}>Change childProp2</button>
+                    <button onClick={() => this.classObj.childProp3.baseProp++}>Change childProp3 inner</button>
+                    <button onClick={() => this.classObj.childProp3 = new BaseClass()}>Change childProp3</button>
+                    <button onClick={() => this.classObj = new ChildClass()}>Renew</button>
                 </div>
             </div>
         );

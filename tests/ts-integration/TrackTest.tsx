@@ -1,6 +1,28 @@
 import * as React from 'react';
 import {track, action, extend, untracked} from './../../src';
 
+class BaseClass {
+    baseProp: number;
+    baseProp2: any;
+
+    constructor() {
+        this.baseProp = 1;
+        this.baseProp2 = { id: 10 };
+    }
+}
+
+class ChildClass extends BaseClass {
+    childProp = 10;
+    childProp2: any;
+    childProp3: BaseClass;
+
+    constructor() {
+        super();
+        this.childProp2 = { id: 10 };
+        this.childProp3 = new BaseClass();
+    }
+}
+
 const ObjComponent = ({obj}) => (
     <div onClick={() => {
         obj.id++;
@@ -69,6 +91,8 @@ export class TrackTest extends React.Component<{}, {}> {
     };
 
     @track.watchShallow shallowArray: any = [{id: 99}, {id: 100}, {id: 101}];
+
+    @track classObj = new ChildClass();
 
     componentDidMount() {
         this.uninit = 10;
@@ -210,6 +234,14 @@ export class TrackTest extends React.Component<{}, {}> {
                     <button onClick={() => this.shallowArray.push({id: 1})}>Push obj</button>
                     <button onClick={() => this.shallowArray = [{id: 111}]}>Change arr</button>
                     <button onClick={() => this.shallowArray = {}}>Change to not arr</button>
+                </div>
+                <div>
+                    Class tests: {JSON.stringify(this.classObj)}
+                    <button onClick={() => this.classObj.childProp++}>Change childProp</button>
+                    <button onClick={() => this.classObj.childProp2.id++}>Change childProp2</button>
+                    <button onClick={() => this.classObj.childProp3.baseProp++}>Change childProp3 inner</button>
+                    <button onClick={() => this.classObj.childProp3 = new BaseClass()}>Change childProp3</button>
+                    <button onClick={() => this.classObj = new ChildClass()}>Renew</button>
                 </div>
             </div>
         );
