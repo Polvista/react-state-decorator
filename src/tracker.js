@@ -30,7 +30,9 @@ export function isTracking(target) {
 function Tracker(target) {
     this.values = {};
     this.callbacks = [];
+    this.shallowCallbacks = [];
     this.subscriptions = {};
+    this.propsScopes = {};
     this.target = target;
     this.waitingForActionsToEnd = false;
     this.rerenderCallbackSetted = false;
@@ -51,8 +53,14 @@ Tracker.prototype._setValue = function(prop, value, shouldReport = true) {
 
         this.stopListen(prop);
 
-        if(valueTracker)
-            this.subscriptions[prop] = valueTracker.onChange(() => this.reportChange(prop));
+        if(valueTracker) {
+            // don't subscribe for changes for scope === 'ref'
+            if(this.propsScopes[prop] == null) {
+                this.subscriptions[prop] = valueTracker.onChange(() => this.reportChange(prop));
+            } else if(this.propsScopes[prop] == 'shallow') {
+                this.subscriptions[prop] = valueTracker.onShallowChange(() => this.reportChange(prop));
+            }
+        }
     }
 
     this.values[prop] = value;
@@ -137,6 +145,17 @@ Tracker.prototype.onChange = function(callback, isRerenderCallback) {
     };
 };
 
+Tracker.prototype.onShallowChange = function(callback) {
+    this.shallowCallbacks.push(callback);
+
+    return () => {
+        const index = this.shallowCallbacks.indexOf(callback);
+        if(index > -1) {
+            this.shallowCallbacks.splice(index, 1);
+        }
+    };
+};
+
 Tracker.prototype.isRerenderCallbackSetted = function() {
     return this.rerenderCallbackSetted;
 };
@@ -158,7 +177,17 @@ Tracker.prototype.reportChange = function(changedProp) {
     }
 
     this.callbacks.forEach(callback => callback());
+
+    // if changedProp is not specified, object changed shallowly
+    if(changedProp == null)
+        this.shallowCallbacks.forEach(callback => callback());
+
 };
+
+Tracker.prototype.setPropScope = function(prop, scope) {
+    this.propsScopes[prop] = scope;
+};
+
 /*
 
 class Tracker {

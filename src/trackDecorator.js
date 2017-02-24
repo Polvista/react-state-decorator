@@ -8,6 +8,8 @@ function createTrackDecorator(scope) {
 
         function initialize(instance, initialValue) {
             const tracker = getTracker(instance);
+
+            tracker.setPropScope(propertyName, scope);
             tracker.initValue(propertyName, initialValue);
 
             if(!tracker.isRerenderCallbackSetted()) {
@@ -47,6 +49,12 @@ function createTrackDecorator(scope) {
         }
 
         function set(val) {
+            if(scope === 'shallow' && val != null && !(val instanceof Array)) {
+                const err = 'Value for watchShallow is not a collection';
+                console.error(err, val);
+                throw new Error(err);
+            }
+
             getTracker(this).setValue(propertyName, val);
         }
 

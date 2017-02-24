@@ -64,6 +64,12 @@ export default class TrackTest extends Component {
         })
     };
 
+    @track.watchRef refObject = {
+        id: 99
+    };
+
+    @track.watchShallow shallowArray = [{id: 99}, {id: 100}, {id: 101}];
+
     componentDidMount() {
         window.trackTest = this;
 
@@ -194,6 +200,18 @@ export default class TrackTest extends Component {
                 <div>
                     Do untracked action: {this.task.id}
                     <button onClick={() => untracked(() => this.task.id++)}>Change</button>
+                </div>
+                <div>
+                    watchRef: {this.refObject.id}
+                    <button onClick={() => this.refObject.id++}>Change id</button>
+                    <button onClick={() => this.refObject = {id: 1}}>Change obj</button>
+                </div>
+                <div>
+                    watchShallow: {this.shallowArray.map(obj => obj.id).join(',')}
+                    <button onClick={() => this.shallowArray[0].id++}>Change inner</button>
+                    <button onClick={() => this.shallowArray.push({id: 1})}>Push obj</button>
+                    <button onClick={() => this.shallowArray = [{id: 111}]}>Change arr</button>
+                    <button onClick={() => this.shallowArray = {}}>Change to not arr</button>
                 </div>
             </div>
         );

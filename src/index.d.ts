@@ -1,10 +1,10 @@
-interface TrackScopes {
+interface TrackInterface {
+    (target: Object, key: string, baseDescriptor?: PropertyDescriptor): any;
     watchRef(target: Object, key: string, baseDescriptor?: PropertyDescriptor): any;
     watchShallow(target: Object, key: string, baseDescriptor?: PropertyDescriptor): any;
 }
 
-export function track(target: Object, key: string, baseDescriptor?: PropertyDescriptor): any;
-export const track: TrackScopes;
+export const track: TrackInterface;
 
 export function action(target: Object, propertyKey: string, descriptor?: PropertyDescriptor): void;
 export function action<A1, R, T extends (a1: A1) => R>(fn: T): T;

@@ -372,6 +372,14 @@ describe('track decorator tests', () => {
             component.shallowArray.push(10);
         }, 3);
 
+        testCase('ignore non-shallow change 2', () => {
+            component.shallowArray[0].id++;
+            component.shallowArray[1].id++;
+            component.shallowArray.length = 0;
+            component.shallowArray[0] = { id: 20 };
+            component.shallowArray[0].id++;
+        }, 2);
+
         describe('not collection assign', () => {
             let exception;
             beforeEach(() => {
