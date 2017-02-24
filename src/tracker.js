@@ -132,26 +132,23 @@ Tracker.prototype.getValue = function(prop) {
 };
 
 Tracker.prototype.onChange = function(callback, isRerenderCallback) {
-    this.callbacks.push(callback);
-
     if(isRerenderCallback)
         this.rerenderCallbackSetted = true;
 
-    return () => {
-        const index = this.callbacks.indexOf(callback);
-        if(index > -1) {
-            this.callbacks.splice(index, 1);
-        }
-    };
+    return this._addCallback(this.callbacks, callback);
 };
 
 Tracker.prototype.onShallowChange = function(callback) {
-    this.shallowCallbacks.push(callback);
+    return this._addCallback(this.shallowCallbacks, callback);
+};
+
+Tracker.prototype._addCallback = function(cbArr, callback) {
+    cbArr.push(callback);
 
     return () => {
-        const index = this.shallowCallbacks.indexOf(callback);
+        const index = cbArr.indexOf(callback);
         if(index > -1) {
-            this.shallowCallbacks.splice(index, 1);
+            cbArr.splice(index, 1);
         }
     };
 };
