@@ -1,5 +1,5 @@
 import {getTracker} from '../tracker';
-import {defineProp} from '../utils';
+import {defineProp, getOwnPropertyNames} from '../utils';
 
 export function extend(target, obj) {
     const tracker = getTracker(target);
@@ -8,7 +8,7 @@ export function extend(target, obj) {
         throw new Error('Incorrect call extend');
     }
 
-    Object.getOwnPropertyNames(obj).forEach(prop => {
+    getOwnPropertyNames(obj).forEach(prop => {
         tracker.initValue(prop, obj[prop]);
         defineProp(target, prop, {
             enumerable: true,

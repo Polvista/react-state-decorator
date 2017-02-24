@@ -2,6 +2,7 @@
  * Put some global functions in variables, so it could be minified efficiently
  * */
 export const defineProp = Object.defineProperty;
+export const getOwnPropertyNames = Object.getOwnPropertyNames;
 
 export function addHiddenProp(object, propName, value) {
     defineProp(object, propName, {

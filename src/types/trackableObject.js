@@ -1,10 +1,10 @@
 import {getTracker} from '../tracker';
-import {defineProp} from '../utils';
+import {defineProp, getOwnPropertyNames} from '../utils';
 
 export function getTrackableObject(target) {
     const tracker = getTracker(target);
 
-    Object.getOwnPropertyNames(target).forEach(propName => {
+    getOwnPropertyNames(target).forEach(propName => {
         const descriptor = Object.getOwnPropertyDescriptor(target, propName);
         if(!descriptor || descriptor.writable === false || descriptor.configurable === false) {
             return;
