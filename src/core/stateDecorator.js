@@ -3,7 +3,7 @@ import {getTracker} from './tracker';
 import {globalState} from './globalState';
 import {defineProp} from '../utils/utils';
 
-function createTrackDecorator(scope) {
+function createStateDecorator(scope) {
     return function(target, propertyName, descriptor) {
 
         patchLifecycleMethods(
@@ -82,8 +82,8 @@ function createTrackDecorator(scope) {
     }
 }
 
-const trackDecorator = createTrackDecorator();
-trackDecorator.watchRef = createTrackDecorator('ref');
-trackDecorator.watchShallow = createTrackDecorator('shallow');
+const stateDecorator = createStateDecorator();
+stateDecorator.watchRef = createStateDecorator('ref');
+stateDecorator.watchShallow = createStateDecorator('shallow');
 
-export const track = trackDecorator;
+export const state = stateDecorator;

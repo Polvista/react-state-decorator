@@ -1,6 +1,6 @@
 import * as React from  'react';
 import {TrackTest} from "./TrackTest";
-import {track} from "../../src";
+import {state} from "../../src";
 import {LifecycleTest} from "./LifecycleTest";
 
 export class App extends React.Component<{}, {}> {
@@ -8,7 +8,7 @@ export class App extends React.Component<{}, {}> {
         id: 1
     };
 
-    @track showLifecycleTest = false;
+    @state showLifecycleTest = false;
 
     render() {
         return (

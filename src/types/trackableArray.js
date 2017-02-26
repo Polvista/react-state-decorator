@@ -2,7 +2,7 @@ import {getTracker} from '../core/tracker';
 import {defineProp, create} from '../utils/utils';
 
 export const outOfBoundariesTrackRange = 1;
-const ignoreChangesProp = '__$trackIgnoreChanges';
+const ignoreChangesProp = '__@state__ignoreChanges';
 const mutatingMethods = ['shift', 'push', 'pop', 'unshift', 'reverse', 'sort', 'fill', 'copyWithin', 'splice'];
 
 const trackableArrayPrototype = create(Array.prototype);

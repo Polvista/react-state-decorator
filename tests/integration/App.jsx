@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import TrackTest from './TrackTest';
 import MobxTest from './MobxTest';
-import {track} from '../../src'
+import {state} from '../../src'
 import LifecycleTest from './LifecycleTest'
 
 export default class App extends Component {
@@ -10,7 +10,7 @@ export default class App extends Component {
         id: 1
     };
 
-    @track showLifecycleTest = false;
+    @state showLifecycleTest = false;
 
     render() {
         return (

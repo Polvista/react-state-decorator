@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {track} from '../../src';
+import {state} from '../../src';
 
 export class LifecycleTest extends React.Component<{passed: any}, {}> {
 
-    @track constr = 0;
-    @track willMount = 0;
-    @track didMount = 0;
-    @track willUpdate = 0;
-    @track didUpdate = 0;
-    @track willUnmount = 0;
+    @state constr = 0;
+    @state willMount = 0;
+    @state didMount = 0;
+    @state willUpdate = 0;
+    @state didUpdate = 0;
+    @state willUnmount = 0;
 
-    @track passedProp;
+    @state passedProp;
 
     constructor(props) {
         super(props);

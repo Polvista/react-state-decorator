@@ -1,9 +1,9 @@
 import {addHiddenProp} from './utils';
 
-const lazyInitializeProp = '__$trackLazyInitializers';
-const lazyInitializationDoneProp = '__$trackLazyInitializationDone';
-const typescriptInitializedProps = '__$trackTypescriptInitializedProps';
-const lifecycleMethodsPatched = '__$trackMethodsPatched';
+const lazyInitializeProp = '__@state__lazyInitializers';
+const lazyInitializationDoneProp = '__@state__lazyInitializationDone';
+const typescriptInitializedProps = '__@state__typescriptInitializedProps';
+const lifecycleMethodsPatched = '__@state__methodsPatched';
 
 export function patchLifecycleMethods(target, onWillMount, onWillUnmount) {
     /**

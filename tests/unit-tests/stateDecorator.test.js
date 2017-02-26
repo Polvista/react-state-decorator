@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {track, action, extend, untracked} from '../../src';
+import {state, action, extend, untracked} from '../../src';
 import {isTracking} from '../../src/core/tracker';
 
 class BaseClass {
@@ -22,11 +22,11 @@ class TestComponent {
 
     changed = 0;
 
-    @track id = 1;
+    @state id = 1;
 
-    @track strProp = 'value';
+    @state strProp = 'value';
 
-    @track object = {
+    @state object = {
         id: 11,
         deep: {
             deepArr: [
@@ -37,31 +37,31 @@ class TestComponent {
         }
     };
 
-    @track list = [{id: 1}, {id: 2}, {id: 3}, {id: 4}];
+    @state list = [{id: 1}, {id: 2}, {id: 3}, {id: 4}];
 
-    @track uninit;
+    @state uninit;
 
-    @track withUntrackedInside = {
+    @state withUntrackedInside = {
         id: 1,
         obj: untracked({
             id: 10
         })
     };
 
-    @track.watchRef refObject = {
+    @state.watchRef refObject = {
         id: 99
     };
 
-    @track.watchShallow shallowArray = [{id: 99}, {id: 100}, {id: 101}];
+    @state.watchShallow shallowArray = [{id: 99}, {id: 100}, {id: 101}];
 
-    @track objWithGlobals = {
+    @state objWithGlobals = {
         normal: {},
         map: new Map(),
         bool: new Boolean(false),
         num: new Number(20)
     };
 
-    @track classObject = new ChildClass();
+    @state classObject = new ChildClass();
 
     @action changeSomething() {
         this.id++;
@@ -468,8 +468,8 @@ describe('track decorator tests', () => {
 
             changed = 0;
 
-            @track prop = 1;
-            @track propObj = {id: 1};
+            @state prop = 1;
+            @state propObj = {id: 1};
 
             forceUpdate() {
                 this.changed++;
@@ -526,7 +526,7 @@ describe('track decorator tests', () => {
                 willMountCalled = false;
                 willUnmountCalled = false;
 
-                @track prop = 1;
+                @state prop = 1;
 
                 componentWillMount() {
                     this.willMountCalled = true;
@@ -552,7 +552,7 @@ describe('track decorator tests', () => {
                 baseWillMountCalled = false;
                 baseWillUnmountCalled = false;
 
-                @track prop = 1;
+                @state prop = 1;
 
                 componentWillMount() {
                     this.baseWillMountCalled = true;
@@ -567,7 +567,7 @@ describe('track decorator tests', () => {
                 childWillMountCalled = false;
                 childWillUnmountCalled = false;
 
-                @track childProp = 1;
+                @state childProp = 1;
 
                 changed = 0;
 
@@ -605,7 +605,7 @@ describe('track decorator tests', () => {
                     childWillMountCalled = false;
                     childWillUnmountCalled = false;
 
-                    @track childProp = 1;
+                    @state childProp = 1;
 
                     changed = 0;
 

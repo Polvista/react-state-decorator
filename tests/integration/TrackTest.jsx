@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {track, action, extend, untracked} from './../../src';
+import {state, action, extend, untracked} from './../../src';
 
 class BaseClass {
     constructor() {
@@ -37,13 +37,13 @@ class ObjCLassComponent extends Component {
 
 export default class TrackTest extends Component {
 
-    @track count = 0;
-    @track title = 'Hello';
-    @track task = {
+    @state count = 0;
+    @state title = 'Hello';
+    @state task = {
         id: 1
     };
 
-    @track taskDeep = {
+    @state taskDeep = {
         id: 191,
         title: 'Some title',
         nested: {
@@ -51,42 +51,42 @@ export default class TrackTest extends Component {
         }
     };
 
-    @track uninit;
+    @state uninit;
 
-    @track withGetSet;
+    @state withGetSet;
 
-    @track array = [1, 2, 3];
+    @state array = [1, 2, 3];
 
-    @track objForChildFunctionalComponent = {
+    @state objForChildFunctionalComponent = {
         id: 200
     };
 
-    @track objForChildClassComponent = {
+    @state objForChildClassComponent = {
         id: 200
     };
 
-    @track objForActionTest = {
+    @state objForActionTest = {
         id: 300
     };
 
-    @track addDeleteObj = {
+    @state addDeleteObj = {
         id: 15
     };
 
-    @track withUntracked = {
+    @state withUntracked = {
         id: 10,
         obj: untracked({
             val: '0'
         })
     };
 
-    @track.watchRef refObject = {
+    @state.watchRef refObject = {
         id: 99
     };
 
-    @track.watchShallow shallowArray = [{id: 99}, {id: 100}, {id: 101}];
+    @state.watchShallow shallowArray = [{id: 99}, {id: 100}, {id: 101}];
 
-    @track classObj = new ChildClass();
+    @state classObj = new ChildClass();
 
     componentDidMount() {
         window.trackTest = this;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {track, action, extend, untracked} from './../../src';
+import {state, action, extend, untracked} from './../../src';
 
 class BaseClass {
     baseProp: number;
@@ -43,13 +43,13 @@ class ObjCLassComponent extends React.Component<{obj: {id: number}}, {}> {
 
 export class TrackTest extends React.Component<{}, {}> {
 
-    @track count = 0;
-    @track title = 'Hello';
-    @track task = {
+    @state count = 0;
+    @state title = 'Hello';
+    @state task = {
         id: 1
     };
 
-    @track taskDeep = {
+    @state taskDeep = {
         id: 191,
         title: 'Some title',
         nested: {
@@ -57,42 +57,42 @@ export class TrackTest extends React.Component<{}, {}> {
         }
     };
 
-    @track uninit;
+    @state uninit;
 
-    @track withGetSet;
+    @state withGetSet;
 
-    @track array = [1, 2, 3];
+    @state array = [1, 2, 3];
 
-    @track objForChildFunctionalComponent = {
+    @state objForChildFunctionalComponent = {
         id: 200
     };
 
-    @track objForChildClassComponent = {
+    @state objForChildClassComponent = {
         id: 200
     };
 
-    @track objForActionTest = {
+    @state objForActionTest = {
         id: 300
     };
 
-    @track addDeleteObj: {id: number, addedVal?: {id: number}} = {
+    @state addDeleteObj: {id: number, addedVal?: {id: number}} = {
         id: 15
     };
 
-    @track withUntracked = {
+    @state withUntracked = {
         id: 10,
         obj: untracked({
             val: '0'
         })
     };
 
-    @track.watchRef refObject = {
+    @state.watchRef refObject = {
         id: 99
     };
 
-    @track.watchShallow shallowArray: any = [{id: 99}, {id: 100}, {id: 101}];
+    @state.watchShallow shallowArray: any = [{id: 99}, {id: 100}, {id: 101}];
 
-    @track classObj = new ChildClass();
+    @state classObj = new ChildClass();
 
     componentDidMount() {
         this.uninit = 10;

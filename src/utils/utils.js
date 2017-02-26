@@ -63,7 +63,3 @@ export function isCollection(value) {
 export function isArray(target) {
     return Array.isArray(target);
 }
-
-export function isUnique(value, index, array) {
-    return array.indexOf(value) === index;
-}
