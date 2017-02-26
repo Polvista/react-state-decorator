@@ -195,6 +195,7 @@ ComponentTracker.prototype.setRerenderCallback = function(cb) {
 };
 
 ComponentTracker.prototype.stopRerender = function() {
+    this.isMounted = false;
     this.rerenderCallbackSubscription && this.rerenderCallbackSubscription();
 };
 
