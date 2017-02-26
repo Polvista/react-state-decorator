@@ -1,5 +1,5 @@
 {
-  "name": "react-track-state",
+  "name": "react-state-decorator",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Polvista/react-track-state.git"
+    "url": "git+https://github.com/Polvista/react-state-decorator.git"
   },
   "keywords": [
     "React",
@@ -28,9 +28,9 @@
   "author": "Alex Sokolov",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Polvista/react-track-state/issues"
+    "url": "https://github.com/Polvista/react-state-decorator/issues"
   },
-  "homepage": "https://github.com/Polvista/react-track-state#readme",
+  "homepage": "https://github.com/Polvista/react-state-decorator#readme",
   "devDependencies": {
     "@types/react": "^15.0.11",
     "@types/react-dom": "^0.14.23",
