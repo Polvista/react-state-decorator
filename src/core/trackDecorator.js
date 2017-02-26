@@ -1,7 +1,7 @@
-import {classPropertyDecorator, patchLifecycleMethods} from './decoratorUtils';
+import {classPropertyDecorator, patchLifecycleMethods} from '../utils/decoratorUtils';
 import {getTracker} from './tracker';
 import {globalState} from './globalState';
-import {defineProp} from './utils';
+import {defineProp} from '../utils/utils';
 
 function createTrackDecorator(scope) {
     return function(target, propertyName, descriptor) {

@@ -1,5 +1,5 @@
-import {getTracker} from '../tracker';
-import {defineProp, create} from '../utils';
+import {getTracker} from '../core/tracker';
+import {defineProp, create} from '../utils/utils';
 
 export const outOfBoundariesTrackRange = 1;
 const ignoreChangesProp = '__$trackIgnoreChanges';

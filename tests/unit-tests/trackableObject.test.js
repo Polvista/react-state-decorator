@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {extend} from '../../src';
 import {getTrackableObject} from '../../src/types/trackableObject';
-import {getTracker, isTracking} from '../../src/tracker';
+import {getTracker, isTracking} from '../../src/core/tracker';
 
 class BaseClass {
     constructor() {

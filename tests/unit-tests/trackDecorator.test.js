@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {track, action, extend, untracked} from '../../src';
-import {isTracking} from '../../src/tracker';
+import {isTracking} from '../../src/core/tracker';
 
 class BaseClass {
     constructor() {

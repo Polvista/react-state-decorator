@@ -1,7 +1,7 @@
-import {getTrackableArray} from './types/trackableArray';
-import {getTrackableObject} from './types/trackableObject';
-import {addHiddenFinalProp, isUntrackable, isCollection, isArray, create} from './utils';
-import {markedUntrackable} from './core/untracked';
+import {getTrackableArray} from '../types/trackableArray';
+import {getTrackableObject} from '../types/trackableObject';
+import {addHiddenFinalProp, isUntrackable, isCollection, isArray, create} from '../utils/utils';
+import {markedUntrackable} from './untracked';
 
 const trackerProp = '__$tracker';
 

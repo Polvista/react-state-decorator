@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {getTracker, isTracking} from '../../src/tracker';
+import {getTracker, isTracking} from '../../src/core/tracker';
 import {extend} from '../../src';
 
 describe('extend tests', () => {

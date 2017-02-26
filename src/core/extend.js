@@ -1,5 +1,5 @@
-import {getTracker} from '../tracker';
-import {defineProp, getOwnPropertyNames} from '../utils';
+import {getTracker} from './tracker';
+import {defineProp, getOwnPropertyNames} from '../utils/utils';
 
 export function extend(target, obj) {
     const tracker = getTracker(target);

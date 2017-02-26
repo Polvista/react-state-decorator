@@ -1,5 +1,5 @@
-import {getTracker} from '../tracker';
-import {defineProp, getOwnPropertyNames} from '../utils';
+import {getTracker} from '../core/tracker';
+import {defineProp, getOwnPropertyNames} from '../utils/utils';
 
 export function getTrackableObject(target) {
     const tracker = getTracker(target);

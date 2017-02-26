@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {getTrackableArray, outOfBoundariesTrackRange} from '../../src/types/trackableArray';
-import {getTracker, isTracking} from '../../src/tracker';
+import {getTracker, isTracking} from '../../src/core/tracker';
 
 function checkForInProps(trackable, arr) {
     const trackableProps = [];

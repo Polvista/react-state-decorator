@@ -29,6 +29,6 @@ export class App extends React.Component<{}, {}> {
                 <br />
                 <br />
             </div>
-    );
+        );
     }
 }

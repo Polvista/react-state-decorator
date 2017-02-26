@@ -1,5 +1,5 @@
-import {globalState} from '../globalState';
-import {isUntrackable, addHiddenProp, isCollection, isGlobalObject} from '../utils';
+import {globalState} from './globalState';
+import {isUntrackable, addHiddenProp, isCollection, isGlobalObject} from '../utils/utils';
 
 const untrackableProp = '__$untrackable';
 
