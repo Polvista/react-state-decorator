@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {state, action, extend, untracked} from './../../src';
+import {state, action, extend, untracked} from 'api';
 
 class BaseClass {
     baseProp: number;

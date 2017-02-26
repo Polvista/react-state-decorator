@@ -10,7 +10,7 @@
     "dev": "webpack-dev-server --hot --inline",
     "dev-ts": "webpack-dev-server --hot --inline --config webpack.ts.config.js",
     "test": "mocha tests/unit-tests --compilers js:babel-core/register",
-    "build": "gulp && NODE_ENV=production webpack"
+    "build": "gulp && NODE_ENV=production webpack && NODE_ENV=production webpack --config webpack.ts.config.babel.js"
   },
   "repository": {
     "type": "git",

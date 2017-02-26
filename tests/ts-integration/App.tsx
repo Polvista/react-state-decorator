@@ -1,6 +1,6 @@
 import * as React from  'react';
 import {TrackTest} from "./TrackTest";
-import {state} from "../../src";
+import {state} from "api";
 import {LifecycleTest} from "./LifecycleTest";
 
 export class App extends React.Component<{}, {}> {

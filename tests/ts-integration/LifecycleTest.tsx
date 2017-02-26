@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {state} from '../../src';
+import {state} from 'api';
 
 export class LifecycleTest extends React.Component<{passed: any}, {}> {
 
