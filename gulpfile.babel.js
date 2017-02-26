@@ -4,6 +4,38 @@ import {rollup} from 'rollup';
 import babel from 'rollup-plugin-babel';
 import fs from 'fs';
 
+const innerMethods = [
+    'startedActions',
+    'startedUntrackedActions',
+    'afterActionsEndedCallbacks',
+    'values',
+    'callbacks',
+    'shallowCallbacks',
+    'subscriptions',
+    'propsScopes',
+    '_setValue',
+    '_makeTrackable',
+    'setValueSilently',
+    'initValue',
+    'deleteValue',
+    'stopListen',
+    'getValue',
+    'onChange',
+    'onShallowChange',
+    '_addCallback',
+    'reportChange',
+    'setPropScope',
+    'isWaitingForActionsToEnd',
+    'setWaitingForActionsToEnd',
+    'isRerenderCallbackSetted',
+    'setRerenderCallback',
+    'stopRerender',
+    'setMounted',
+    'waitingForActionsToEnd',
+    'rerenderCallbackSubscription',
+    'isMounted'
+];
+
 gulp.task('default', ['build', 'copy']);
 
 gulp.task('rollup', () => {
@@ -20,25 +52,25 @@ gulp.task('rollup', () => {
         ]
     }).then(bundle => bundle.write({
         format: 'cjs',
-        dest: 'build/index.js'
+        dest: 'build/lib/index.js'
     }));
 });
 
 gulp.task('build', ['rollup'], () => {
-    const result = uglify.minify('build/index.js', {
+    const result = uglify.minify('build/lib/index.js', {
         mangle: {
             toplevel: true
         },
         mangleProperties: {
-            regex: /^startedUntrackedActions/
+            regex: new RegExp(`^(${innerMethods.join('|')})$`)
         }
     });
 
-    fs.writeFile('build/index.min.js', result.code);
+    fs.writeFile('build/lib/index.min.js', result.code);
 });
 
 
 gulp.task('copy', () => {
     gulp.src(['src/index.d.ts', 'package.json', 'LICENSE', 'README.md'])
-        .pipe(gulp.dest('build'));
+        .pipe(gulp.dest('build/lib'));
 });

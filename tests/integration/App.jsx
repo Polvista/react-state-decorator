@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import TrackTest from './TrackTest';
 import MobxTest from './MobxTest';
-import {state} from '../../src'
+import {state} from 'api'
 import LifecycleTest from './LifecycleTest'
 
 export default class App extends Component {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {state, action, extend, untracked} from './../../src';
+import {state, action, extend, untracked} from 'api';
 
 class BaseClass {
     constructor() {

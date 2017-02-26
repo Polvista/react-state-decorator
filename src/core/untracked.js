@@ -1,7 +1,7 @@
 import {globalState} from './globalState';
 import {isUntrackable, addHiddenProp, isCollection, isGlobalObject} from '../utils/utils';
 
-const untrackableProp = '__$untrackable';
+const untrackableProp = '__@state__untrackable';
 
 export function markedUntrackable(target) {
     return target[untrackableProp] === true;

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {state} from '../../src';
+import {state} from 'api';
 
 export default class LifecycleTest extends Component {
 
