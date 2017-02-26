@@ -1,11 +1,11 @@
 import {getTracker} from '../tracker';
-import {defineProp} from '../utils';
+import {defineProp, create} from '../utils';
 
 export const outOfBoundariesTrackRange = 1;
 const ignoreChangesProp = '__$trackIgnoreChanges';
 const mutatingMethods = ['shift', 'push', 'pop', 'unshift', 'reverse', 'sort', 'fill', 'copyWithin', 'splice'];
 
-const trackableArrayPrototype = Object.create(Array.prototype);
+const trackableArrayPrototype = create(Array.prototype);
 mutatingMethods.forEach(defineTrackableArrayMethod);
 defineProp(trackableArrayPrototype, 'toJSON', {
     configurable: true,
@@ -16,7 +16,7 @@ defineProp(trackableArrayPrototype, 'toJSON', {
 });
 
 export function getTrackableArray(origArray) {
-    const trackableArray = Object.create(trackableArrayPrototype);
+    const trackableArray = create(trackableArrayPrototype);
     const tracker = getTracker(trackableArray);
 
     // init array
@@ -73,8 +73,6 @@ export function getTrackableArray(origArray) {
 
         }
     });
-
-    (global || window).trArr = trackableArray;
 
     return trackableArray;
 }

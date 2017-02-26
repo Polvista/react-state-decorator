@@ -3,6 +3,7 @@
  * */
 export const defineProp = Object.defineProperty;
 export const getOwnPropertyNames = Object.getOwnPropertyNames;
+export const create = Object.create;
 
 export function addHiddenProp(object, propName, value) {
     defineProp(object, propName, {

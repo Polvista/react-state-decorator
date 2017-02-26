@@ -1,18 +1,18 @@
 import {getTrackableArray} from './types/trackableArray';
 import {getTrackableObject} from './types/trackableObject';
-import {addHiddenFinalProp, isUntrackable, isCollection, isArray} from './utils';
+import {addHiddenFinalProp, isUntrackable, isCollection, isArray, create} from './utils';
 import {markedUntrackable} from './core/untracked';
 
 const trackerProp = '__$tracker';
 
-export function getTracker(instance) {
+export function getTracker(instance, isComponent) {
     if(isUntrackable(instance) || markedUntrackable(instance) || isCollection(instance))
         return;
 
     if(instance[trackerProp])
         return instance[trackerProp];
 
-    const tracker = new Tracker(instance);
+    const tracker = isComponent ? new ComponentTracker(instance) : new Tracker(instance);
     addHiddenFinalProp(instance, trackerProp, tracker);
 
     return tracker;
@@ -32,8 +32,6 @@ function Tracker(target) {
     this.subscriptions = {};
     this.propsScopes = {};
     this.target = target;
-    this.waitingForActionsToEnd = false;
-    this.rerenderCallbackSetted = false;
 }
 
 Tracker.prototype._setValue = function(prop, value, shouldReport = true) {
@@ -131,10 +129,7 @@ Tracker.prototype.getValue = function(prop) {
     return this.values[prop];
 };
 
-Tracker.prototype.onChange = function(callback, isRerenderCallback) {
-    if(isRerenderCallback)
-        this.rerenderCallbackSetted = true;
-
+Tracker.prototype.onChange = function(callback) {
     return this._addCallback(this.callbacks, callback);
 };
 
@@ -151,18 +146,6 @@ Tracker.prototype._addCallback = function(cbArr, callback) {
             cbArr.splice(index, 1);
         }
     };
-};
-
-Tracker.prototype.isRerenderCallbackSetted = function() {
-    return this.rerenderCallbackSetted;
-};
-
-Tracker.prototype.isWaitingForActionsToEnd = function() {
-    return this.waitingForActionsToEnd;
-};
-
-Tracker.prototype.setWaitingForActionsToEnd = function(value) {
-    this.waitingForActionsToEnd = value;
 };
 
 Tracker.prototype.reportChange = function(changedProp) {
@@ -183,4 +166,38 @@ Tracker.prototype.reportChange = function(changedProp) {
 
 Tracker.prototype.setPropScope = function(prop, scope) {
     this.propsScopes[prop] = scope;
+};
+
+function ComponentTracker() {
+    Tracker.apply(this, arguments);
+    this.waitingForActionsToEnd = false;
+    this.rerenderCallbackSubscription = null;
+    this.isMounted = false;
+}
+
+ComponentTracker.prototype = create(Tracker.prototype);
+ComponentTracker.prototype.constructor = Tracker;
+
+ComponentTracker.prototype.isWaitingForActionsToEnd = function() {
+    return this.waitingForActionsToEnd;
+};
+
+ComponentTracker.prototype.setWaitingForActionsToEnd = function(value) {
+    this.waitingForActionsToEnd = value;
+};
+
+ComponentTracker.prototype.isRerenderCallbackSetted = function() {
+    return this.rerenderCallbackSubscription != null;
+};
+
+ComponentTracker.prototype.setRerenderCallback = function(cb) {
+    this.rerenderCallbackSubscription = Tracker.prototype.onChange.call(this, cb);
+};
+
+ComponentTracker.prototype.stopRerender = function() {
+    this.rerenderCallbackSubscription && this.rerenderCallbackSubscription();
+};
+
+ComponentTracker.prototype.setMounted = function() {
+    this.isMounted = true;
 };

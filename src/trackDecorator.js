@@ -1,4 +1,4 @@
-import classPropertyDecorator from './classPropertyDecorator';
+import {classPropertyDecorator, patchLifecycleMethods} from './decoratorUtils';
 import {getTracker} from './tracker';
 import {globalState} from './globalState';
 import {defineProp} from './utils';
@@ -6,14 +6,28 @@ import {defineProp} from './utils';
 function createTrackDecorator(scope) {
     return function(target, propertyName, descriptor) {
 
+        patchLifecycleMethods(
+            target,
+            instance => getTracker(instance, true).setMounted(),
+            instance => getTracker(instance, true).stopRerender()
+        );
+
         function initialize(instance, initialValue) {
-            const tracker = getTracker(instance);
+            const tracker = getTracker(instance, true);
 
             tracker.setPropScope(propertyName, scope);
             tracker.initValue(propertyName, initialValue);
 
+            const rerenderComponent = () => {
+                // component was not mounted, we are in constructor
+                if(!tracker.isMounted)
+                    return;
+
+                instance.forceUpdate();
+            };
+
             if(!tracker.isRerenderCallbackSetted()) {
-                tracker.onChange(() => {
+                tracker.setRerenderCallback(() => {
                     if(globalState.startedUntrackedActions > 0) {
                         return;
                     }
@@ -24,16 +38,15 @@ function createTrackDecorator(scope) {
                             tracker.setWaitingForActionsToEnd(true);
                             globalState.afterActionsEndedCallbacks.push(() => {
                                 tracker.setWaitingForActionsToEnd(false);
-                                instance.forceUpdate();
+                                rerenderComponent();
                             });
                         }
 
                         return;
                     }
 
-                    // TODO track mount state
-                    instance.forceUpdate();
-                }, true);
+                    rerenderComponent();
+                });
             }
 
             defineProp(instance, propertyName, {
@@ -45,17 +58,17 @@ function createTrackDecorator(scope) {
         }
 
         function get() {
-            return getTracker(this).getValue(propertyName);
+            return getTracker(this, true).getValue(propertyName);
         }
 
         function set(val) {
             if(scope === 'shallow' && val != null && !(val instanceof Array)) {
-                const err = 'Value for watchShallow is not a collection';
+                const err = 'Value for @state.watchShallow is not an array';
                 console.error(err, val);
                 throw new Error(err);
             }
 
-            getTracker(this).setValue(propertyName, val);
+            getTracker(this, true).setValue(propertyName, val);
         }
 
         return classPropertyDecorator(

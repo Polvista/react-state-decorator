@@ -1,5 +1,5 @@
 import {globalState} from './globalState';
-import {classPropertyDecorator} from './classPropertyDecorator';
+import {classPropertyDecorator} from './decoratorUtils';
 import {addHiddenProp} from './utils';
 
 export function action(arg1) {

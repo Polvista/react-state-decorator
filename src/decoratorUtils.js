@@ -3,6 +3,27 @@ import {addHiddenProp} from './utils';
 const lazyInitializeProp = '__$trackLazyInitializers';
 const lazyInitializationDoneProp = '__$trackLazyInitializationDone';
 const typescriptInitializedProps = '__$trackTypescriptInitializedProps';
+const lifecycleMethodsPatched = '__$trackMethodsPatched';
+
+export function patchLifecycleMethods(target, onWillMount, onWillUnmount) {
+    /**
+     * Not the best pattern, but HOC would require extra decorator
+     * */
+
+    if(target[lifecycleMethodsPatched])
+        return;
+
+    const patchMethod = (name, cb) => {
+        const orig = target[name];
+        target[name] = function() {
+            cb(this);
+            orig && orig.apply(this, arguments);
+        }
+    };
+
+    patchMethod('componentWillMount', onWillMount);
+    patchMethod('componentWillUnmount', onWillUnmount);
+}
 
 export function classPropertyDecorator(target, propertyName, descriptor, initialize, get, set) {
     if(descriptor) {
