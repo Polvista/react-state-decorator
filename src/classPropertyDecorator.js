@@ -4,7 +4,7 @@ const lazyInitializeProp = '__$trackLazyInitializers';
 const lazyInitializationDoneProp = '__$trackLazyInitializationDone';
 const typescriptInitializedProps = '__$trackTypescriptInitializedProps';
 
-export default function classPropertyDecorator(target, propertyName, descriptor, initialize, get, set) {
+export function classPropertyDecorator(target, propertyName, descriptor, initialize, get, set) {
     if(descriptor) {
         // babel and typescript get / set props
 

@@ -97,6 +97,12 @@ class TestComponent {
 
 }
 
+function createTestComponent() {
+    const component = new TestComponent();
+    component.componentWillMount();
+    return component;
+}
+
 describe('track decorator tests', () => {
     describe('base', () => {
         let component;
@@ -104,8 +110,8 @@ describe('track decorator tests', () => {
         let initialValue;
 
         beforeEach(() => {
-            component = new TestComponent();
-            componentCopy = new TestComponent();
+            component = createTestComponent();
+            componentCopy = createTestComponent();
         });
 
         it('should have tracked properties as own properties', () => {
@@ -180,7 +186,7 @@ describe('track decorator tests', () => {
             function testCase(name, func, extra = () => 0) {
                 describe(name, () => {
                     beforeEach(() => {
-                        component = new TestComponent();
+                        component = createTestComponent();
                         try{
                             action(func)();
                         } catch(e) {
@@ -230,7 +236,7 @@ describe('track decorator tests', () => {
             function testCase(name, func, extra = () => 0) {
                 describe(name, () => {
                     beforeEach(() => {
-                        component = new TestComponent();
+                        component = createTestComponent();
                         try{
                             func();
                         } catch(e) {
@@ -260,7 +266,7 @@ describe('track decorator tests', () => {
         let component;
 
         beforeEach(() => {
-            component = new TestComponent();
+            component = createTestComponent();
         });
 
         function testCase(name, action, realChangesCount = 0) {
@@ -324,7 +330,7 @@ describe('track decorator tests', () => {
         let component;
 
         beforeEach(() => {
-            component = new TestComponent();
+            component = createTestComponent();
         });
 
         function testCase(name, action, realChangesCount = 0) {
@@ -351,7 +357,7 @@ describe('track decorator tests', () => {
     describe('watchRef tests', () => {
         let component;
         beforeEach(() => {
-            component = new TestComponent();
+            component = createTestComponent();
         });
 
         function testCase(name, action, changesCount) {
@@ -381,7 +387,7 @@ describe('track decorator tests', () => {
     describe('watchShallow tests', () => {
         let component;
         beforeEach(() => {
-            component = new TestComponent();
+            component = createTestComponent();
         });
 
         function testCase(name, action, changesCount) {
@@ -435,7 +441,7 @@ describe('track decorator tests', () => {
         function testCase(name, action, changes) {
             describe(name, () => {
                 beforeEach(() => {
-                    component = new TestComponent();
+                    component = createTestComponent();
                     action();
                 });
 
@@ -452,6 +458,190 @@ describe('track decorator tests', () => {
             component.classObject = new BaseClass();
             component.classObject.baseProp++;
         }, 7);
+    });
+
+    describe('lifecycle tests', () => {
+
+        let component;
+
+        class LifecycleCmp {
+
+            changed = 0;
+
+            @track prop = 1;
+            @track propObj = {id: 1};
+
+            forceUpdate() {
+                this.changed++;
+            }
+        }
+
+
+        function testCase(name, action, changes) {
+            describe(name, () => {
+                beforeEach(action);
+
+                it('should change right amount of times', () => expect(component.changed).to.equal(changes));
+            });
+        }
+
+        testCase('ignore changes before mount', () => {
+            component = new LifecycleCmp();
+            component.prop++;
+            component.prop++;
+        }, 0);
+
+        testCase('track changes after mount', () => {
+            component = new LifecycleCmp();
+            component.prop++;
+            component.prop++;
+            component.componentWillMount();
+            component.prop++;
+            component.prop++;
+        }, 2);
+
+        testCase('stop tracking changes after unmount', () => {
+            component = new LifecycleCmp();
+            component.componentWillMount();
+            component.prop++;
+            component.prop++;
+            component.componentWillUnmount();
+            component.prop++;
+            component.prop++;
+        }, 2);
+
+        testCase('stop tracking changes after unmount 2', () => {
+            component = new LifecycleCmp();
+            component.componentWillMount();
+            component.propObj.id++;
+            component.propObj.id++;
+            component.componentWillUnmount();
+            component.propObj.id++;
+            component.propObj.id++;
+        }, 2);
+
+        describe('check existing lifecycle methods called', () => {
+            class ExistingMethodsCmp {
+
+                willMountCalled = false;
+                willUnmountCalled = false;
+
+                @track prop = 1;
+
+                componentWillMount() {
+                    this.willMountCalled = true;
+                }
+
+                componentWillUnmount() {
+                    this.willUnmountCalled = true;
+                }
+            }
+
+            beforeEach(() => {
+                component = new ExistingMethodsCmp();
+                component.componentWillMount();
+                component.componentWillUnmount();
+            });
+
+            it('should call existing willMount', () => expect(component.willMountCalled).to.be.true);
+            it('should call existing willUnmount', () => expect(component.willUnmountCalled).to.be.true);
+        });
+
+        describe('inheritance', () => {
+            class BaseCmp {
+                baseWillMountCalled = false;
+                baseWillUnmountCalled = false;
+
+                @track prop = 1;
+
+                componentWillMount() {
+                    this.baseWillMountCalled = true;
+                }
+
+                componentWillUnmount() {
+                    this.baseWillUnmountCalled = true;
+                }
+            }
+
+            class ChildCmp extends BaseCmp {
+                childWillMountCalled = false;
+                childWillUnmountCalled = false;
+
+                @track childProp = 1;
+
+                changed = 0;
+
+                forceUpdate() {
+                    this.changed++;
+                }
+
+                componentWillMount() {
+                    this.childWillMountCalled = true;
+                }
+
+                componentWillUnmount() {
+                    this.childWillUnmountCalled = true;
+                }
+            }
+
+            describe('no super call', () => {
+                beforeEach(() => {
+                    component = new ChildCmp();
+                    component.componentWillMount();
+                    component.prop++;
+                    component.childProp++;
+                    component.componentWillUnmount();
+                    component.prop++;
+                    component.childProp++;
+                });
+
+                it('should call child willMount', () => expect(component.childWillMountCalled).to.be.true);
+                it('should call child willUnmount', () => expect(component.childWillUnmountCalled).to.be.true);
+                it('should change 2 times', () => expect(component.changed).to.equal(2));
+            });
+
+            describe('with super call', () => {
+                class SuperChildCmp extends BaseCmp {
+                    childWillMountCalled = false;
+                    childWillUnmountCalled = false;
+
+                    @track childProp = 1;
+
+                    changed = 0;
+
+                    forceUpdate() {
+                        this.changed++;
+                    }
+
+                    componentWillMount() {
+                        super.componentWillMount();
+                        this.childWillMountCalled = true;
+                    }
+
+                    componentWillUnmount() {
+                        super.componentWillUnmount();
+                        this.childWillUnmountCalled = true;
+                    }
+                }
+
+                beforeEach(() => {
+                    component = new SuperChildCmp();
+                    component.componentWillMount();
+                    component.prop++;
+                    component.childProp++;
+                    component.componentWillUnmount();
+                    component.prop++;
+                    component.childProp++;
+                });
+
+                it('should call child willMount', () => expect(component.childWillMountCalled).to.be.true);
+                it('should call child willUnmount', () => expect(component.childWillUnmountCalled).to.be.true);
+                it('should call base willMount', () => expect(component.baseWillMountCalled).to.be.true);
+                it('should call base willUnmount', () => expect(component.baseWillUnmountCalled).to.be.true);
+                it('should change 2 times', () => expect(component.changed).to.equal(2));
+            });
+
+        });
     });
 
 });
